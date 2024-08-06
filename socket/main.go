@@ -15,7 +15,7 @@ func main() {
 	methods := handlers.AllowedMethods([]string{"POST", "PUT", "GET", "DELETE"})
 	origins := handlers.AllowedOrigins([]string{"*"})
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%+v", 5001),
+		Addr:    fmt.Sprintf(":%+v", 7995),
 		Handler: handlers.CORS(credentials, methods, origins)(r),
 	}
 	err := srv.ListenAndServe()

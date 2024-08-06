@@ -5,13 +5,19 @@ import (
 	"fmt"
 	"github.com/redis/rueidis"
 	"play-around/common"
+	"time"
 )
+
+var client rueidis.Client
 
 func main() {
 	redis := common.InitRedis()
-	resp, err := redis.Do(context.Background(), redis.B().Get().Key("yy").Build()).AsInt64()
-	if rueidis.IsRedisNil(err) {
-		fmt.Println("Key not found")
+	client = redis
+	if err := SetDataOnlyIfExistWithTTL(context.Background(), "key", "value", 1000000); err != nil {
+		fmt.Print(err)
 	}
-	fmt.Print(resp)
+}
+
+func SetDataOnlyIfExistWithTTL(ctx context.Context, key string, value string, ttlInMilliseconds int) error {
+	return client.Do(ctx, client.B().Set().Key(key).Value(value).Xx().Pxat(time.Now().Add(time.Duration(ttlInMilliseconds)*time.Millisecond)).Build()).Error()
 }

@@ -54,7 +54,7 @@ func main() {
 
 func run() {
 
-	messages := make(chan rueidis.PubSubMessage, 1024)
+	messages := make(chan rueidis.PubSubMessage, 10000)
 
 	for i := 0; i < clients; i++ {
 		go func(index int) {
@@ -70,25 +70,25 @@ func run() {
 		}(i)
 	}
 
-	//for i := 0; i < concurrency; i++ {
-	go func() {
-		for {
-			for i := 0; i < clients; i++ {
-				//var c string
-				//c = "request-" + strconv.Itoa(i)
-				//redis.Do(context.Background(), redis.B().Publish().Channel(c).Message(data).Build())
-				//atomic.AddInt64(&write, 1)
+	for z := 0; z < concurrency; z++ {
+		go func() {
+			for {
+				for i := 0; i < clients; i++ {
+					//var c string
+					//c = "request-" + strconv.Itoa(i)
+					//redis.Do(context.Background(), redis.B().Publish().Channel(c).Message(data).Build())
+					//atomic.AddInt64(&write, 1)
 
-				client.Do(context.Background(), client.B().Publish().Channel("response-"+strconv.Itoa(i)).Message(data).Build())
-				atomic.AddInt64(&write, 1)
-				<-messages
+					client.Do(context.Background(), client.B().Publish().Channel("response-"+strconv.Itoa(i)).Message(data).Build())
+					atomic.AddInt64(&write, 1)
+					<-messages
+				}
+				//for i := 0; i < clients; i++ {
+				//	<-messages
+				//}
 			}
-			//for i := 0; i < clients; i++ {
-			//	<-messages
-			//}
-		}
-	}()
-	//}
+		}()
+	}
 	select {}
 }
 
