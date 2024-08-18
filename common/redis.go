@@ -53,6 +53,7 @@ func InitWithLock() (rueidis.Client, rueidislock.Locker) {
 
 	lockerOption := rueidislock.LockerOption{
 		ClientOption: clientOption,
+		KeyValidity:  time.Second * 100,
 	}
 	locker, _ := rueidislock.NewLocker(lockerOption)
 

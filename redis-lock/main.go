@@ -9,11 +9,10 @@ import (
 
 func main() {
 	_, locker := common.InitWithLock()
-	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancelFunc()
-	_, _, err := locker.WithContext(ctx, "lock:123")
+	_, _, err := locker.WithContext(ctx, "test")
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
-	fmt.Println("success")
 }
