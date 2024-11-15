@@ -13,15 +13,24 @@ func runWithRecover(fn func()) {
 	}()
 	fn()
 }
+
 func main() {
 
+	//now := time.Now()
+	//time.Sleep(500 * time.Millisecond)
+	//seconds := int64(time.Since(now).Seconds())
+	//fmt.Println(seconds)
+
 	// recover avoid crash in go routine is propagated to main
-	go runWithRecover(func() {
+	runWithRecover(func() {
 		fmt.Println("start function normally")
+		time.Sleep(2 * time.Second)
 		panic("panic in run with recover")
 	})
 
+	fmt.Println("returned normally from main")
+
 	time.Sleep(5 * time.Second)
 
-	fmt.Println("returned normally from main")
+	fmt.Println("after normally from main")
 }
