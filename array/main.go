@@ -4,15 +4,21 @@ import "fmt"
 
 func main() {
 
-	str := "ana"
-	fmt.Println(len(str)) // 3
-	str = "世界"
-	fmt.Println(len(str)) // 6 not 2
+	//ints := make([]int, 2)
+	//ints = append(ints, 0)
+	//fmt.Println(len(ints))
+	access()
+}
 
-	var i []int
-	if len(i) == 0 {
-		println("empty")
-	} else {
-		println("not empty")
-	}
+type data struct {
+	value int
+}
+
+func access() {
+	arr := make([]data, 1)
+	arr[0] = data{value: 1}
+	before := &arr[0]
+	fmt.Println(before.value)
+	arr[0] = data{value: 2}
+	fmt.Println(before.value)
 }
