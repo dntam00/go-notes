@@ -1,14 +1,13 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	"golang.org/x/net/icmp"
 	"golang.org/x/net/ipv4"
 	"golang.org/x/sys/unix"
 	"math/big"
 	"net"
 	"os"
-	"os/signal"
 	"strconv"
 	"syscall"
 	"time"
@@ -22,28 +21,71 @@ import (
 //|             Data               |
 //+--------------------------------+
 
+// https://stackoverflow.com/questions/22116873/set-socket-option-is-why-so-important-for-a-socket-ip-hdrincl-in-icmp-request
+// https://darkcoding.net/software/raw-sockets-in-go-link-layer/
+
+type IcmpResult struct {
+	dst         string
+	result      string
+	seq         int
+	requestTime time.Time
+}
+
+// go run main.go 5 20.1.0.12 veth1
 func main() {
 
-	numsOfPackets := 5
-	destination := "20.1.0.11"
-	bindInterface := "veth1"
-	timeout := 10 * time.Second
+	argsWithoutProg := os.Args[1:]
 
+	numsOfPackets, _ := strconv.Atoi(argsWithoutProg[0])
+	destination := argsWithoutProg[1]
+
+	bindInterface := ""
+	if len(argsWithoutProg) > 2 {
+		bindInterface = argsWithoutProg[2]
+	}
+
+	timeout := 4 * time.Second
 	var err error
-	fd, _ := unix.Socket(unix.AF_INET, unix.SOCK_RAW, unix.IPPROTO_RAW)
+	sendingFd, _ := unix.Socket(unix.AF_INET, unix.SOCK_RAW, unix.IPPROTO_RAW)
 
 	if bindInterface != "" {
-		err = unix.SetsockoptString(fd, unix.SOL_SOCKET, unix.SO_BINDTODEVICE, bindInterface)
+		err = unix.SetsockoptString(sendingFd, unix.SOL_SOCKET, unix.SO_BINDTODEVICE, bindInterface)
 		if err != nil {
 			panic("failed to bind fd to interface, error: " + err.Error())
 		}
 	}
 
-	go func() {
-		fd, _ := unix.Socket(unix.AF_INET, unix.SOCK_RAW, unix.IPPROTO_ICMP)
-		//unix.SetsockoptString(fd, unix.SOL_SOCKET, unix.SO_BINDTODEVICE, "veth1")
-		f := os.NewFile(uintptr(fd), fmt.Sprintf("fd %d", fd))
+	responseCh := make(chan IcmpResult, numsOfPackets)
+	done := make(chan bool)
+	packets := make(map[int]IcmpResult)
 
+	go func() {
+		for {
+			select {
+			case result, closed := <-responseCh:
+				if !closed {
+					done <- true
+					break
+				}
+				origin := packets[result.seq]
+				fmt.Printf("ping to: %v, response: %v, seq: %d, latency:%f\n", origin.dst, result.result, result.seq, time.Since(origin.requestTime).Seconds())
+			}
+		}
+	}()
+
+	icmpFd, _ := unix.Socket(unix.AF_INET, unix.SOCK_RAW, unix.IPPROTO_ICMP)
+	icmpFdFile := os.NewFile(uintptr(icmpFd), fmt.Sprintf("fd %d", icmpFd))
+
+	defer func() {
+		err := icmpFdFile.Close()
+		if err != nil {
+			fmt.Println("failed to close icmp socket, error: " + err.Error())
+		}
+		_ = unix.Close(icmpFd)
+	}()
+
+	go func(f *os.File) {
+		received := 0
 		for {
 			buf := make([]byte, 256)
 			tv := syscall.Timeval{
@@ -51,58 +93,127 @@ func main() {
 				Usec: int64(timeout.Microseconds() % 1e6),
 			}
 			now := time.Now()
-			if err := syscall.SetsockoptTimeval(fd, syscall.SOL_SOCKET, syscall.SO_RCVTIMEO, &tv); err != nil {
+			if err := syscall.SetsockoptTimeval(icmpFd, syscall.SOL_SOCKET, syscall.SO_RCVTIMEO, &tv); err != nil {
 				panic("failed to set read deadline, error: " + err.Error())
 			}
-			_, err := f.Read(buf)
-			if err != nil {
+			packetLen, readErr := f.Read(buf)
+			if readErr != nil {
 				fmt.Println("read timeout, take: ", time.Since(now).Milliseconds())
-				return
+				continue
 			}
-			icmpTypeStr := buf[20:21]
-			icmpType, _ := strconv.Atoi(fmt.Sprintf("% X", icmpTypeStr))
 
-			if icmpType == 3 {
-				fmt.Printf("receive destination unreachable, currentSeq: % X", buf)
+			ipHeader := ipv4.Header{}
+			readErr = ipHeader.Parse(buf[:packetLen])
+
+			if readErr != nil {
+				fmt.Println("failed to parse ip ipHeader, error: " + readErr.Error())
+				continue
 			}
-			if icmpType == 0 {
-				seqStr := buf[26:28]
+
+			icmpPkt := buf[ipHeader.Len:ipHeader.TotalLen]
+
+			icmpMessage, readErr := icmp.ParseMessage(1, icmpPkt)
+			if readErr != nil {
+				fmt.Println("failed to parse icmp icmpMessage, error: " + readErr.Error())
+				continue
+			}
+
+			//fmt.Printf("receive icmp packet: %v, %v, %d\n", icmpMessage.Type, icmpMessage.Code, packetLen)
+
+			// assume v4
+			// https://datatracker.ietf.org/doc/html/rfc792
+			//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+			//|     Type      |     Code      |          Checksum             |
+			//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+			//|                             unused                            |
+			//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+			//|      Internet Header + 64 bits of Original Data Datagram      |
+			//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+			icmpConcrete := icmpMessage.Type.(ipv4.ICMPType)
+
+			switch icmpConcrete {
+			case ipv4.ICMPTypeDestinationUnreachable:
+				internalPayload, readErr := icmpMessage.Body.Marshal(1)
+				if readErr != nil {
+					fmt.Println("failed to parse icmp icmp internal payload, error: " + readErr.Error())
+					continue
+				}
+				// skip 4 unused bytes
+				internalPayload = internalPayload[4:]
+
+				originalIPHeader := ipv4.Header{}
+				readErr = originalIPHeader.Parse(internalPayload)
+
+				if readErr != nil {
+					fmt.Println("failed to parse original ip ipHeader, error: " + readErr.Error())
+					continue
+				}
+				if originalIPHeader.Dst.String() != destination {
+					fmt.Println("destination mismatch, skip destination unreachable packet")
+					continue
+				}
+
+				received++
+
+				// skip 6 bytes of original data to get seq number
+				seqStr := internalPayload[originalIPHeader.Len+6 : originalIPHeader.Len+8]
 				seqNumber := new(big.Int)
 				seqNumber.SetString(fmt.Sprintf("%X", seqStr), 16)
-				sendTimeByte := buf[28:43]
-				sendTime := time.Time{}
-				_ = sendTime.UnmarshalBinary(sendTimeByte)
-				fmt.Printf("receive icmp reply packet: seq=%d, latency= %dμs\n", seqNumber, time.Since(sendTime).Microseconds())
+
+				responseCh <- IcmpResult{result: "destination unreachable", seq: int(seqNumber.Uint64())}
+				break
+			case ipv4.ICMPTypeEchoReply:
+				if ipHeader.Src.String() != destination {
+					fmt.Println("destination mismatch, skip echo reply packet")
+					continue
+				}
+				received++
+				internalPayload, readErr := icmpMessage.Body.Marshal(1)
+				if readErr != nil {
+					fmt.Println("failed to parse icmp icmp internal payload, error: " + readErr.Error())
+					continue
+				}
+				seqStr := internalPayload[2:4]
+				seqNumber := new(big.Int)
+				seqNumber.SetString(fmt.Sprintf("%X", seqStr), 16)
+				responseCh <- IcmpResult{result: "ping reply", seq: int(seqNumber.Int64())}
+				break
+			case ipv4.ICMPTypeEcho:
+				continue
+			}
+			if received == numsOfPackets {
+				close(responseCh)
+				break
 			}
 		}
-	}()
+	}(icmpFdFile)
 
 	for seq := 1; seq <= numsOfPackets; seq++ {
+		packets[seq] = IcmpResult{dst: destination, seq: seq, requestTime: time.Now()}
 		p := buildPacket(destination, seq)
 
 		addr := unix.SockaddrInet4{
 			Port: 0,
 			Addr: [4]byte(net.ParseIP(destination).To4()),
 		}
-		err = unix.Sendto(fd, p, 0, &addr)
+		err = unix.Sendto(sendingFd, p, 0, &addr)
 		if err != nil {
 			panic("failed to send packet, error: " + err.Error())
 		}
 	}
 
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
-	<-ctx.Done()
+	_ = <-done
 }
 
 func buildPacket(dest string, seq int) []byte {
 	ipHeader := ipv4.Header{
-		Version:  4,
-		Len:      20,
-		TOS:      0,
-		TotalLen: 20 + 10,
+		Version: ipv4.Version,
+		Len:     20,
+		TOS:     0,
+		//TotalLen: 20 + 10,
 		//ID:       0,
-		Flags:    0,
+		Flags:    ipv4.DontFragment,
 		FragOff:  0,
 		TTL:      32,
 		Protocol: 1,
@@ -112,54 +223,24 @@ func buildPacket(dest string, seq int) []byte {
 		//Options: nil,
 	}
 
-	icmpPacket := []byte{
-		8, // type: echo request
-		0, // code: not used by echo request
-		0, // checksum (16 bit), we fill in below
-		0,
-		0, // identifier (16 bit). zero allowed.
-		1,
-		//byte(seq), // sequence number (16 bit). zero allowed.
-		//0,
-		////0xC0, // Optional data. ping puts time packet sent here
-		//...now,
-		//0xDE,
+	echo := &icmp.Echo{
+		ID:   1,
+		Seq:  seq,
+		Data: []byte{0xC0, 0xDE},
 	}
 
-	seqBitStr := strconv.FormatInt(int64(seq), 2)
-	for len(seqBitStr) <= 16 {
-		seqBitStr = "0" + seqBitStr
+	icmpMsg := icmp.Message{
+		Type:     ipv4.ICMPTypeEcho,
+		Code:     0,
+		Checksum: 0,
+		Body:     echo,
 	}
-	seqFirstByteStr := seqBitStr[:len(seqBitStr)-8]
-	seqSecondByteStr := seqBitStr[len(seqBitStr)-8:]
-	seqFirstByte, _ := strconv.ParseInt(seqFirstByteStr, 2, 64)
-	seqSecondByte, _ := strconv.ParseInt(seqSecondByteStr, 2, 64)
-	icmpPacket = append(icmpPacket, byte(seqFirstByte))
-	icmpPacket = append(icmpPacket, byte(seqSecondByte))
 
-	// timestamp len: 15
-	now, err := time.Now().MarshalBinary()
-	icmpPacket = append(icmpPacket, now...)
-
-	icmpPacket = append(icmpPacket, 0xDE)
-	cs := csum(icmpPacket)
-	icmpPacket[2] = byte(cs)
-	icmpPacket[3] = byte(cs >> 8)
+	t, err := icmpMsg.Marshal(nil)
 
 	out, err := ipHeader.Marshal()
 	if err != nil {
-		panic("failed to marshal ipHeader, error: " + err.Error())
+		panic("failed to marshal ip header, error: " + err.Error())
 	}
-	return append(out, icmpPacket...)
-}
-
-func csum(b []byte) uint16 {
-	var s uint32
-	for i := 0; i < len(b); i += 2 {
-		s += uint32(b[i+1])<<8 | uint32(b[i])
-	}
-	// add back the carry
-	s = s>>16 + s&0xffff
-	s = s + s>>16
-	return uint16(^s)
+	return append(out, t...)
 }
