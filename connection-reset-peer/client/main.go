@@ -18,12 +18,12 @@ func main() {
 
 	time.Sleep(7 * time.Second)
 
-	_, err = conn.Write([]byte("Hello from client"))
+	_, err = conn.Write([]byte("Hello from lb"))
 	if err != nil {
 		log.Println("write error: " + err.Error())
 	}
 	//
-	//// sleep to make sure client receive "RST" packet
+	//// sleep to make sure lb receive "RST" packet
 	time.Sleep(1 * time.Second)
 
 	var bs = make([]byte, 1024)

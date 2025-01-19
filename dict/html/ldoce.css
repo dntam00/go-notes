@@ -1,0 +1,1869 @@
+* {
+    box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: none;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5em;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background: #fff;
+    font-family: arial, helvetica, sans-serif;
+    color: #333333;
+    flex-direction: column;
+    min-height: 100%;
+    overflow-y: scroll;
+}
+
+input, submit, select, textarea, button {
+    font-size: inherit;
+}
+
+ul, ol {
+    list-style-type: none;
+}
+
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+h1 {
+    display: block;
+    font-size: 1.6em;
+    margin-bottom: 20px;
+}
+
+/* end */
+/* browse */
+.browse_letters,
+.browse_dictionaries {
+    margin-bottom: 20px;
+}
+
+.browse_dictionaries li {
+    margin: 16px 2px;
+}
+
+.browse_dictionaries li a {
+    padding: 8px 20px;
+}
+
+.browse_letters li {
+    display: inline-block;
+}
+
+.browse_letters li a {
+    display: inline-block;
+    padding: 1em;
+}
+
+.browse_letters li a:hover {
+    background: #222;
+    color: #eee;
+    display: inline-block;
+}
+
+.browse_groups,
+.browse_results {
+    list-style: disc outside;
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+    margin-bottom: 20px;
+}
+
+.browse_groups li,
+.browse_results li {
+    margin-left: 20px;
+    padding: 0.5em;
+}
+
+.browse_groups li a,
+.browse_results li a {
+    padding: 0px 2px;
+}
+
+.browse_groups li a:hover,
+.browse_dictionaries li a:hover,
+.browse_results li a:hover {
+    background: #222;
+    color: #eee;
+}
+
+.browse_groups li a .head {
+    display: inline;
+}
+
+.browse_results .pos,
+.browse_panel .pos,
+.searches .pos {
+    font-size: 0.8em;
+    font-style: italic;
+    vertical-align: top;
+}
+
+/* end */
+.content {
+    position: relative;
+    flex: 1 0 auto;
+    min-height: 100px;
+}
+
+.message {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+}
+
+/* entry content */
+.entry_content,
+.page_content,
+.error_content {
+    margin: 0px 20px 20px 20px;
+}
+
+.EXAMPLE {
+    color: #778899;
+    margin-left: 20px;
+}
+
+.entry_content .dictionary .defRef {
+    border-bottom: thin dotted gray;
+}
+
+/* end */
+.content .ENTRY .POSGR {
+    margin-top: 2em;
+}
+
+.content .ENTRY .SENSE {
+    margin-top: 1em;
+}
+
+.content .ENTRY .EXAS {
+    margin-left: 1em;
+}
+
+.content .ENTRY .EXACNT .attr-type {
+    display: inline-block;
+    margin-right: 2em;
+}
+
+.content .ENTRY .EXACNT .attr-type:before {
+    content: "[";
+}
+
+.content .ENTRY .EXACNT .attr-type:after {
+    content: "]";
+}
+
+.content .ENTRY .EXA {
+    font-style: italic;
+}
+
+.content .ENTRY .EXA:before {
+    content: "'";
+}
+
+.content .ENTRY .EXA:after {
+    content: "'";
+}
+
+.content img {
+    float: right;
+    width: 30%;
+}
+
+.content .speaker:hover {
+    cursor: pointer;
+}
+
+.content td {
+    padding-right: 2px;
+}
+
+.home .content {
+    margin: 0;
+}
+
+.home .content .home_content {
+    margin: 0 auto 60px auto;
+}
+
+.home_welcome_link {
+    color: red;
+    cursor: pointer;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+.home .content .cols {
+    text-align: center;
+}
+
+.home .content .left_col,
+.home .content .middle_col,
+.home .content .right_col,
+.home .content .second_col {
+    display: inline-block;
+    vertical-align: top;
+    text-align: left;
+}
+
+.home .content .second_col {
+    width: 450px;
+}
+
+.home .content .box,
+.responsive_cell2 .right_col .box {
+    padding: 20px;
+}
+
+.home .content .grey_box {
+    border: 1px solid lightgray;
+    margin: 20px 20px 0 0;
+    height: 270px;
+}
+
+.responsive_cell2 .right_col .grey_box {
+    border: 1px solid lightgray;
+    margin: 20px 20px 0 0;
+}
+
+.home .content .left_box {
+    width: 280px;
+}
+
+.home .content div.box_title,
+.responsive_cell2 .right_col div.box_title {
+    margin-bottom: 10px;
+}
+
+.home .content .left_box.wotd .box_title {
+    margin: 0;
+}
+
+.home .content span.box_title,
+.responsive_cell2 .right_col span.box_title {
+    color: white;
+    padding: 0 20px 2px 7px;
+}
+
+.home .content .box,
+.responsive_cell2 .right_col .wotd {
+    overflow-y: auto;
+}
+
+.home .content .wotd .box_title,
+.responsive_cell2 .right_col .wotd .box_title {
+    background-color: red;
+}
+
+.home .content .tdwds li {
+    counter-increment: count-me;
+    color: #2f5597;
+    padding-left: 20px;
+}
+
+.home .content .tdwds li:before {
+    content: counter(count-me);
+    display: block;
+    position: relative;
+    max-width: 0px;
+    max-height: 0px;
+    left: -105%;
+    top: .05em;
+    color: #333333;
+}
+
+.home .content .second_col .homeDict {
+    overflow: hidden;
+    width: inherit;
+}
+
+
+.home .content .tdwds .title_entry {
+    font-size: 1.2em;
+    font-weight: normal;
+    letter-spacing: 0px;
+    display: block;
+}
+
+#tcotw ul li {
+    display: inline;
+}
+
+.home .content .ldoceEntry .Sense {
+    margin: 0;
+}
+
+.home .content li,
+.home .content span.view_more {
+    font-weight: bold;
+}
+
+.home .content li {
+    color: black;
+}
+
+.home .content span.view_more {
+    color: blue;
+}
+
+.home .content div.view_more {
+    margin-left: 20px;
+}
+
+.home .content .middle_box {
+    width: 360px;
+}
+
+.home .content .middle_box.tdwds {
+    width: 280px;
+    overflow: hidden;
+}
+
+.home .content #hot_topics_title {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #000;
+    background-color: #e5e5e5;
+    padding: 2px 20px 2px 7px;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.home .content .middle_box ul {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.home .content .middle_box ul li {
+    display: inline-block;
+}
+
+.home .content #pictures_title,
+.responsive_cell2 .right_col #pictures_title {
+    background-color: #35a3ff;
+}
+
+.home .content #tcotw span.box_title, .home .content .tdwds .box_title {
+    background-color: #f1d600;
+}
+
+.home .content .homeDict .box_title {
+    background-color: #e5e5e5;
+    color: #333333;
+}
+
+.home .content .right_col {
+    margin-top: 20px;
+}
+
+.responsive_cell2 .right_col {
+    margin-top: 110px;
+    margin-bottom: 20px;
+    width: 300px;
+}
+
+.right_box,
+.right_box .hover {
+    height: 180px;
+    width: 180px;
+}
+
+.page .right_box, .page .hover {
+    width: auto;
+}
+
+.page .right_box .hook_title {
+    font-size: 1.4em;
+}
+
+.page .hover ul {
+    font-size: 20px;
+}
+
+.right_box {
+    margin-bottom: 10px;
+    background-color: #fae660;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px;
+    position: relative;
+}
+
+.right_box .symbols {
+    font-size: 5em;
+    font-family: 'longmaneltdict';
+    margin-top: 15px;
+    height: 120px;
+}
+
+.page .right_box .symbols {
+    font-size: 7em;
+    margin-top: -25px;
+    height: 150px;
+}
+
+.right_box.corpus .symbols:before {
+    content: "\e613";
+}
+
+.right_box .def:before {
+    content: "\e610";
+}
+
+.right_box .hover {
+    display: none;
+    background-color: #333333;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px;
+    text-align: left;
+}
+
+.right_box:hover .hover {
+    display: block;
+}
+
+.right_box .hover div {
+    color: #fae660;
+    margin-bottom: 5px;
+}
+
+.right_box .hover li {
+    color: white;
+    font-weight: 300;
+    font-size: 0.7em;
+}
+
+.right_box.quizzes li {
+    color: #333333;
+}
+
+.right_box .hover li:before {
+    content: "+";
+    margin-right: 4px;
+    color: #fae660;
+}
+
+.home .content .dict_title {
+    font-weight: bold;
+    margin-bottom: 40px;
+    font-size: 0.95em;
+}
+
+.paragraph {
+    display: block;
+    padding-top: 4px;
+}
+
+/* Small desktop screen */
+@media screen and (min-width: 948px) and (max-width: 1224px) {
+    .entry_content, .page_content, .error_content {
+        margin: 0px 20px 20px 20px;
+    }
+
+    .content .responsive_cell2.left_col {
+        width: 10%;
+    }
+
+    .responsive_cell6 {
+        width: 48%;
+    }
+
+    .browse_groups, .browse_results {
+        list-style: disc outside;
+        -webkit-column-count: 1;
+        -moz-column-count: 1;
+        column-count: 1;
+    }
+
+    .footer .links {
+        padding-left: 100px;
+    }
+}
+
+/* FullHD */
+@media screen and (min-width: 1280px) {
+    .contentslot {
+        height: 90px;
+    }
+}
+
+/**** FREEONLINE****/
+.page {
+    font-family: arial, helvetica, sans-serif;
+    font-size: 12pt;
+    display: block;
+}
+
+.pagetitle,
+h1.topicpagetitle {
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+.topicpagetitle a {
+    font-style: italic;
+}
+
+.topicpagetitle a:hover {
+    color: #314089;
+}
+
+.metadata,
+.metadata {
+    color: magenta;
+    display: none;
+}
+
+.infls,
+.description,
+.title,
+.url,
+.summary,
+.og,
+.infls,
+.description,
+.title,
+.url,
+.summary,
+.og {
+    display: block;
+}
+
+.infls:before,
+.infls:before {
+    content: 'inflections: ';
+}
+
+.description:before,
+.description:before {
+    content: 'description: ';
+}
+
+.summary:before,
+.summary:before {
+    content: 'summary: ';
+}
+
+.title:before,
+.title:before {
+    content: 'title: ';
+}
+
+.exaGroup .title:before,
+.exaGroup .title:before {
+    content: '';
+}
+
+.Crossrefto {
+    color: blue;
+    font-weight: bold
+}
+
+.suppressed {
+    display: none;
+}
+
+.og .title:before,
+.og .title:before {
+    content: 'og.title: ';
+}
+
+.url:before {
+    content: 'url: ';
+}
+
+.og .url:before,
+.og .url:before {
+    content: 'og.url: ';
+}
+
+.dictentry {
+    display: block;
+    margin-bottom: 25px;
+}
+
+.dictionary_intro,
+.topic_intro {
+    display: block;
+    background-color: #35a3ff;
+    color: #fff;
+    padding-left: 10px;
+    margin: 5px 0 10px -7px
+}
+
+.assets_intro,
+.asset_intro {
+    border: solid 1px;
+    border-color: #f1d600;
+    background-color: #f1d600;
+    color: #fff;
+    font-weight: normal;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.right_col .yellow_box {
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.yellow_box {
+    margin-top: 22px;
+    display: table;
+}
+
+/*****  LDOCE  ***************************/
+.ldoceEntry .Entry {
+    font-size: 12pt;
+    text-align: justify;
+    display: block;
+    margin-top: 8px;
+}
+
+.ldoceEntry .Thesref {
+    color: #364395;
+}
+
+
+.ldoceEntry .ABBR {
+    font-weight: bold;
+}
+
+.ldoceEntry .ACTIV {
+    display: none;
+}
+
+.ldoceEntry .AMEQUIV {
+    font-weight: bold;
+}
+
+.ldoceEntry .BOX {
+    display: none;
+}
+
+.ldoceEntry .BREQUIV {
+    font-weight: bold;
+}
+
+.ldoceEntry .COLLO {
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.ldoceEntry .ColloExa {
+    display: block;
+}
+
+.ldoceEntry .COLLOINEXA {
+    font-weight: bold;
+}
+
+.ldoceEntry .COMMENT {
+    display: none;
+}
+
+.ldoceEntry .COMP {
+    font-weight: bold;
+}
+
+.ldoceEntry .Crossrefto {
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.ldoceEntry .DERIV {
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.ldoceEntry .Entry {
+    font-size: 11pt;
+    text-align: justify;
+}
+
+.ldoceEntry .ErrorBox {
+    display: block;
+}
+
+.ldoceEntry .EXAMPLE {
+    display: block;
+    margin-left: 20px;
+    color: gray;
+}
+
+
+.ldoceEntry .FIELD {
+    display: none;
+}
+
+.ldoceEntry .AC,
+.ldoceEntry .synopp {
+    color: #fff;
+    border-color: #f1d600;
+    background-color: #f1d600;
+}
+
+.ldoceEntry .FREQ {
+    color: red;
+    border-color: red;
+}
+
+.ldoceEntry .LEVEL {
+    color: red;
+    font-size: 120%;
+}
+
+.ldoceEntry .FULLFORM {
+    font-weight: bold;
+}
+
+.ldoceEntry .GEO,
+.ldoceEntry .geo {
+    font-weight: normal;
+    color: #364395;
+}
+
+.ldoceEntry .GLOSS {
+    color: #364395;
+    font-weight: normal;
+    font-style: normal;
+}
+
+.ldoceEntry .GRAM,
+.bussdictEntry .GRAM {
+    color: green;
+    font-weight: bold;
+    margin: 0 5px 10px 3px
+}
+
+.ldoceEntry .GramExa {
+    display: block;
+}
+
+.ldoceEntry .HINTBOLD {
+    font-weight: bold;
+}
+
+.ldoceEntry .HINTITALIC {
+    font-style: italic;
+}
+
+.ldoceEntry .HINTTITLE {
+    font-weight: bold;
+}
+
+.ldoceEntry .frequent .HOMNUM {
+    vertical-align: super;
+    font-size: 12pt;
+    color: red;
+    font-weight: bold;
+}
+
+.ldoceEntry .frequent .HYPHENATION {
+    color: red;
+    font-size: 160%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.ldoceEntry .HOMNUM {
+    vertical-align: super;
+    font-size: 12pt;
+    color: red;
+    font-weight: bold;
+}
+
+.ldoceEntry .HWD {
+    display: none;
+}
+
+.ldoceEntry .HYPHENATION,
+.ldoceEntry .PHRVBHWD {
+    font-weight: bold;
+    font-size: 160%;
+    color: red;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.ldoceEntry .LEXUNIT,
+.ldoceEntry .LEXVAR {
+    font-weight: bold;
+}
+
+.ldoceEntry .LINKWORD {
+    color: #364395;
+}
+
+.ldoceEntry .NOTE,
+.ldoceEntry .Noteprompt {
+    display: none;
+}
+
+.ldoceEntry .OBJECT {
+    font-weight: normal;
+}
+
+.ldoceEntry .OPP,
+.ldoceEntry .ORTHVAR,
+.ldoceEntry .PASTPART,
+.ldoceEntry .PASTTENSE {
+    font-weight: bold;
+}
+
+.ldoceEntry .PhrVbEntry {
+    display: block;
+}
+
+.ldoceEntry .PIC,
+.ldoceEntry .PICCAL {
+    display: none;
+}
+
+.ldoceEntry .PLURALFORM {
+    font-weight: bold;
+}
+
+.ldoceEntry .POS,
+.bussdictEntry .POS {
+    color: green;
+    font-weight: bold;
+    margin: 0 0 0 10px
+}
+
+.ldoceEntry .PRESPART,
+.ldoceEntry .PRESPARTX {
+    font-weight: bold;
+}
+
+.ldoceEntry .PROPFORM {
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.ldoceEntry .PROPFORMPREP {
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.ldoceEntry .PTandPP,
+.ldoceEntry .PTandPPX {
+    font-weight: bold;
+}
+
+.ldoceEntry .REFHOMNUM {
+    vertical-align: super;
+    font-size: 60%;
+}
+
+.ldoceEntry .REFHWD {
+    font-weight: bold;
+    font-style: normal;
+}
+
+.ldoceEntry .REFLEX {
+    font-weight: bold;
+}
+
+.ldoceEntry .REGISTERLAB {
+    color: purple;
+    font-style: italic;
+}
+
+.ldoceEntry .RELATEDWD {
+    font-weight: bold;
+    color: blue;
+}
+
+.ldoceEntry .RunOn {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.ldoceEntry .Sense {
+    display: block;
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.ldoceEntry .SIGNPOST {
+    background-color: #f18500;
+    color: white;
+    font-weight: bold;
+    font-size: 79%;
+    text-transform: uppercase;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    /* padding-left: 3px; */
+    /* padding-right: 3px; */
+    padding: 0px 5px;
+    letter-spacing: 1px;
+}
+
+.ldoceEntry .STRONG {
+    font-style: italic;
+}
+
+.ldoceEntry .Subsense {
+    display: block;
+    margin-left: 10px;
+}
+
+.ldoceEntry .SUPERL,
+.ldoceEntry .SYN,
+.ldoceEntry .T3PERSSING,
+.ldoceEntry .T3PERSSINGX {
+    font-weight: bold;
+}
+
+.ldoceEntry .UNCLASSIFIED {
+    font-weight: bold;
+}
+
+.ldoceEntry .USAGE {
+    display: none;
+}
+
+.ldoceEntry .GramBox .CROSS .neutral {
+    color: red;
+    margin-right: 10px;
+}
+
+.ldoceEntry .neutral {
+    color: black;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+}
+
+.ldoceEntry .EXPL .cross,
+.ldoceEntry .GramBox .EXPL .dont_say,
+.ldoceEntry .BADEXA {
+    color: red;
+}
+
+.ldoceEntry .italic {
+    font-style: italic;
+    font-weight: normal;
+}
+
+.ldoceEntry .infllab {
+    font-style: italic;
+    font-weight: normal;
+}
+
+.ldoceEntry .warning {
+    font-style: normal;
+    font-weight: bold;
+    color: red;
+}
+
+.ldoceEntry .sensenum {
+    font-style: normal;
+    font-weight: bold;
+    color: black;
+}
+
+.ldoceEntry .synopp,
+.ldoceEntry .FREQ,
+.ldoceEntry .AC {
+    display: inline-block;
+    font-style: normal;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border: solid 1px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.bussdictEntry .Box,
+.ldoceEntry .ColloBox,
+.ldoceEntry .ThesBox,
+.ldoceEntry .F2NBox,
+.ldoceEntry .GramBox {
+    display: block;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border: solid #364395 1px;
+    padding: 15px;
+    margin: 8px 0;
+}
+
+.GramBox {
+    background-color: #fff;
+    color: #000
+}
+
+.GramBox .boxheader {
+    line-height: 2em
+}
+
+.ColloBox .heading {
+    line-height: 2em;
+    margin: 0 10px 0 0
+}
+
+.ThesBox .heading {
+    line-height: 2em
+}
+
+.ldoceEntry .HEADING,
+.ldoceEntry .heading {
+    font-weight: bold;
+    font-size: 120%;
+    color: #364395;
+}
+
+.ldoceEntry .HEADING.newline {
+    display: block;
+}
+
+.ldoceEntry .SECHEADING,
+.ldoceEntry .subheading {
+    display: table;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border: solid #6f469d 2px;
+    padding-left: 4px;
+    padding-right: 20px;
+    margin: 25px 0 10px 0;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    background-color: #6f469d;
+}
+
+.ldoceEntry .Collocate,
+.ldoceEntry .Exponent {
+    display: block;
+    margin: 15px 0 0 6px;
+}
+
+.ldoceEntry .EXPL {
+    display: block;
+}
+
+.ldoceEntry .COLLOC,
+.ldoceEntry .EXP,
+.ldoceEntry .EXPR {
+    font-weight: bold;
+}
+
+.ldoceEntry .keycollo {
+    font-weight: bold;
+    color: #364395;
+}
+
+.ldoceEntry .THESPROPFORM {
+    font-weight: bold;
+}
+
+.ldoceEntry .COLLEXA,
+.ldoceEntry .THESEXA {
+    color: gray;
+    display: block;
+}
+
+
+.ldoceEntry .LearnerItem {
+    display: block;
+}
+
+.ldoceEntry .GOODCOLLO {
+    font-style: italic;
+}
+
+.ldoceEntry .BADCOLLO {
+    text-decoration: line-through;
+}
+
+.ldoceEntry .DEFBOLD {
+    font-weight: bold;
+}
+
+.ldoceEntry .exafile {
+    color: gray;
+    font-style: normal;
+    font-size: 120%;
+    padding: 5px;
+}
+
+
+.ldoceEntry .amefile {
+    color: #4693db;
+    font-size: 130%;
+    padding-right: 18px;
+    background-size: cover;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgaGVpZ2h0PSIxMDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5vbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0xIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxnIGlkPSJzdmdfMSI+CiAgIDxwYXRoIGZpbGw9IiM0NjkzZGIiIGlkPSJzdmdfMiIgZD0ibTI1Mi41LDcwNC4ybDI1OS41LDI1My41YzcuMyw3LjQgMTcuNiwxMS44IDI4LjgsMTEuOGMyMi41LDAgNDAuOCwtMTguMiA0MC44LC00MC40bDAsLTg1OC4zYzAsLTIyLjMgLTE4LjQsLTQwLjQgLTQwLjgsLTQwLjRjLTExLjUsMCAtMjEuOCw0LjcgLTI5LjIsMTIuMmwtMjU4LjgsMjUzLjJsLTE2MS4xLDBjLTQ1LjEsMCAtODEuNywzNi41IC04MS43LDgxLjdsMCwyNDVjMCw0NS4xIDM2LjUsODEuNyA4MS43LDgxLjdsMTYwLjgsMHptNTU4LjksLTQ1NC45Yy0xOS42LDE5LjQgLTE5LjYsNTEgMCw3MC42YzQ4LjYsNDguOCA3OC44LDExNiA3OC44LDE5MC4zYzAsNzQuMyAtMzAuNCwxNDEuNSAtNzksMTkwLjNjLTE5LjYsMTkuNiAtMTkuNiw1MS4yIDAsNzAuNmMxOS40LDE5LjYgNTEsMTkuNiA3MC42LDBjNjYuOCwtNjYuOCAxMDguMiwtMTU5IDEwOC4yLC0yNjAuOWMwLC0xMDEuNyAtNDEsLTE5My44IC0xMDcuNiwtMjYwLjVsLTAuNCwtMC40Yy0xOS42LC0xOS42IC01MSwtMTkuNiAtNzAuNiwwbDAsMHptLTQyLjMsNDA4LjljMzcuOCwtMzggNjEsLTkwLjIgNjEsLTE0OGMwLC01Ny44IC0yMy4zLC0xMTAgLTYxLC0xNDhjLTE5LjYsLTE5LjYgLTUxLjIsLTE5LjYgLTcwLjYsMGMtMTkuNiwxOS40IC0xOS42LDUxIDAsNzAuNmMxOS42LDE5LjggMzEuOCw0Ny4yIDMxLjgsNzcuNGMwLDMwLjIgLTEyLjMsNTcuNiAtMzEuOCw3Ny40Yy0xOS42LDE5LjYgLTE5LjYsNTEgMCw3MC42YzE5LjMsMTkuNCA1MSwxOS42IDcwLjYsMHoiLz4KICA8L2c+CiA8L2c+Cjwvc3ZnPg==);
+
+}
+
+.EXAMPLE .fa-volume-up {
+    padding-right: 18px;
+    margin-right: 5px;
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgaGVpZ2h0PSIxMDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5vbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0xIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxnIGlkPSJzdmdfMSI+CiAgIDxwYXRoIGZpbGw9IiM4MDgwODAiIGlkPSJzdmdfMiIgZD0ibTI1Mi41LDcwNC4ybDI1OS41LDI1My41YzcuMyw3LjQgMTcuNiwxMS44IDI4LjgsMTEuOGMyMi41LDAgNDAuOCwtMTguMiA0MC44LC00MC40bDAsLTg1OC4zYzAsLTIyLjMgLTE4LjQsLTQwLjQgLTQwLjgsLTQwLjRjLTExLjUsMCAtMjEuOCw0LjcgLTI5LjIsMTIuMmwtMjU4LjgsMjUzLjJsLTE2MS4xLDBjLTQ1LjEsMCAtODEuNywzNi41IC04MS43LDgxLjdsMCwyNDVjMCw0NS4xIDM2LjUsODEuNyA4MS43LDgxLjdsMTYwLjgsMHptNTU4LjksLTQ1NC45Yy0xOS42LDE5LjQgLTE5LjYsNTEgMCw3MC42YzQ4LjYsNDguOCA3OC44LDExNiA3OC44LDE5MC4zYzAsNzQuMyAtMzAuNCwxNDEuNSAtNzksMTkwLjNjLTE5LjYsMTkuNiAtMTkuNiw1MS4yIDAsNzAuNmMxOS40LDE5LjYgNTEsMTkuNiA3MC42LDBjNjYuOCwtNjYuOCAxMDguMiwtMTU5IDEwOC4yLC0yNjAuOWMwLC0xMDEuNyAtNDEsLTE5My44IC0xMDcuNiwtMjYwLjVsLTAuNCwtMC40Yy0xOS42LC0xOS42IC01MSwtMTkuNiAtNzAuNiwwbDAsMHptLTQyLjMsNDA4LjljMzcuOCwtMzggNjEsLTkwLjIgNjEsLTE0OGMwLC01Ny44IC0yMy4zLC0xMTAgLTYxLC0xNDhjLTE5LjYsLTE5LjYgLTUxLjIsLTE5LjYgLTcwLjYsMGMtMTkuNiwxOS40IC0xOS42LDUxIDAsNzAuNmMxOS42LDE5LjggMzEuOCw0Ny4yIDMxLjgsNzcuNGMwLDMwLjIgLTEyLjMsNTcuNiAtMzEuOCw3Ny40Yy0xOS42LDE5LjYgLTE5LjYsNTEgMCw3MC42YzE5LjMsMTkuNCA1MSwxOS42IDcwLjYsMHoiLz4KICA8L2c+CiA8L2c+Cjwvc3ZnPg==);
+}
+
+.ldoceEntry .brefile {
+    color: #fa6360;
+    background-size: cover;
+    font-size: 130%;
+    padding-left: 18px;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgaGVpZ2h0PSIxMDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogPGc+CiAgPHRpdGxlPmJhY2tncm91bmQ8L3RpdGxlPgogIDxyZWN0IGZpbGw9Im5vbmUiIGlkPSJjYW52YXNfYmFja2dyb3VuZCIgaGVpZ2h0PSI0MDIiIHdpZHRoPSI1ODIiIHk9Ii0xIiB4PSItMSIvPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxnIGlkPSJzdmdfMSI+CiAgIDxwYXRoIGZpbGw9IiNmYTYzNjAiIGlkPSJzdmdfMiIgZD0ibTI1Mi41LDcwNC4ybDI1OS41LDI1My41YzcuMyw3LjQgMTcuNiwxMS44IDI4LjgsMTEuOGMyMi41LDAgNDAuOCwtMTguMiA0MC44LC00MC40bDAsLTg1OC4zYzAsLTIyLjMgLTE4LjQsLTQwLjQgLTQwLjgsLTQwLjRjLTExLjUsMCAtMjEuOCw0LjcgLTI5LjIsMTIuMmwtMjU4LjgsMjUzLjJsLTE2MS4xLDBjLTQ1LjEsMCAtODEuNywzNi41IC04MS43LDgxLjdsMCwyNDVjMCw0NS4xIDM2LjUsODEuNyA4MS43LDgxLjdsMTYwLjgsMHptNTU4LjksLTQ1NC45Yy0xOS42LDE5LjQgLTE5LjYsNTEgMCw3MC42YzQ4LjYsNDguOCA3OC44LDExNiA3OC44LDE5MC4zYzAsNzQuMyAtMzAuNCwxNDEuNSAtNzksMTkwLjNjLTE5LjYsMTkuNiAtMTkuNiw1MS4yIDAsNzAuNmMxOS40LDE5LjYgNTEsMTkuNiA3MC42LDBjNjYuOCwtNjYuOCAxMDguMiwtMTU5IDEwOC4yLC0yNjAuOWMwLC0xMDEuNyAtNDEsLTE5My44IC0xMDcuNiwtMjYwLjVsLTAuNCwtMC40Yy0xOS42LC0xOS42IC01MSwtMTkuNiAtNzAuNiwwbDAsMHptLTQyLjMsNDA4LjljMzcuOCwtMzggNjEsLTkwLjIgNjEsLTE0OGMwLC01Ny44IC0yMy4zLC0xMTAgLTYxLC0xNDhjLTE5LjYsLTE5LjYgLTUxLjIsLTE5LjYgLTcwLjYsMGMtMTkuNiwxOS40IC0xOS42LDUxIDAsNzAuNmMxOS42LDE5LjggMzEuOCw0Ny4yIDMxLjgsNzcuNGMwLDMwLjIgLTEyLjMsNTcuNiAtMzEuOCw3Ny40Yy0xOS42LDE5LjYgLTE5LjYsNTEgMCw3MC42YzE5LjMsMTkuNCA1MSwxOS42IDcwLjYsMHoiLz4KICA8L2c+CiA8L2c+Cjwvc3ZnPg==);
+}
+
+
+/*****  BUSSDICT  ***************************/
+.bussdictEntry .Entry {
+    font-size: 12pt;
+    text-align: justify;
+    display: block;
+    margin-top: 8px;
+}
+
+.bussdictEntry .supp {
+    background-color: gray;
+}
+
+.bussdictEntry .ABBR,
+.bussdictEntry .AMEQUIV,
+.bussdictEntry .BREQUIV,
+.bussdictEntry .COLLO,
+.bussdictEntry .COMP {
+    font-weight: bold;
+}
+
+.bussdictEntry .ACTIV,
+.bussdictEntry .COMMENT {
+    display: none;
+}
+
+.bussdictEntry .ColloExa {
+    display: block;
+    margin-left: 10px;
+}
+
+.bussdictEntry .COLLOINEXA {
+    font-style: italic;
+    font-weight: bold;
+}
+
+.bussdictEntry .DERIV {
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.bussdictEntry .ErrorBox {
+    display: block;
+}
+
+.bussdictEntry .EXAMPLE {
+    display: block;
+    margin-left: 15px;
+    color: gray;
+}
+
+.bussdictEntry .Box .EXAMPLE {
+    display: inline;
+    margin-left: 0px;
+    color: black;
+    font-style: italic;
+}
+
+.bussdictEntry .FIELD {
+    display: none;
+}
+
+.bussdictEntry .FREQ,
+.bussdictEntry .LEVEL {
+    font-weight: bold;
+    color: red;
+}
+
+.bussdictEntry .FULLFORM {
+    font-weight: bold;
+}
+
+.bussdictEntry .GEO,
+span.geo {
+    font-weight: normal;
+    font-style: italic;
+    color: #364395;
+}
+
+.bussdictEntry .GLOSS {
+    font-weight: normal;
+    font-style: normal;
+    color: #364395;
+}
+
+.bussdictEntry .GramExa {
+    display: block;
+    margin-left: 10px;
+}
+
+.bussdictEntry .HINTBOLD,
+.bussdictEntry .HINTTITLE {
+    font-weight: bold;
+}
+
+.bussdictEntry .HINTITALIC {
+    font-style: italic;
+}
+
+.bussdictEntry .HOMNUM {
+    vertical-align: super;
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+.bussdictEntry .HWD {
+    display: none;
+}
+
+.bussdictEntry .HYPHENATION {
+    font-weight: bold;
+    font-size: 160%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.bussdictEntry .LEXUNIT,
+.bussdictEntry .LEXVAR {
+    font-weight: bold;
+}
+
+.bussdictEntry .LINKWORD {
+    color: #364395;
+}
+
+.bussdictEntry .NOTE,
+.bussdictEntry .Noteprompt {
+    display: none;
+}
+
+.bussdictEntry .OBJECT {
+    font-weight: normal;
+}
+
+.bussdictEntry .OPP,
+.bussdictEntry .ORTHVAR,
+.bussdictEntry .PASTPART,
+.bussdictEntry .PASTTENSE {
+    font-weight: bold;
+}
+
+.bussdictEntry .PhrVbEntry {
+    display: block;
+}
+
+.bussdictEntry .PHRVBHWD {
+    font-weight: bold;
+    color: #364395;
+    font-size: 120%;
+}
+
+.bussdictEntry .PIC,
+.bussdictEntry .PICCAL {
+    display: none;
+}
+
+.bussdictEntry .PLURALFORM {
+    font-weight: bold;
+}
+
+.bussdictEntry .PRESPART,
+.bussdictEntry .PRESPARTX,
+.bussdictEntry .PROPFORM,
+.bussdictEntry .PROPFORMPREP,
+.bussdictEntry .PTandPP,
+.bussdictEntry .PTandPPX {
+    font-weight: bold;
+}
+
+.bussdictEntry .REFHOMNUM {
+    vertical-align: super;
+    font-size: 60%;
+}
+
+.bussdictEntry .REFHWD {
+    text-transform: lowercase;
+    font-style: normal;
+    font-variant: small-caps;
+}
+
+.bussdictEntry .FIELDXX,
+.bussdictEntry .Crossrefto .REFLEX {
+    display: none;
+}
+
+.bussdictEntry .REFLEX {
+    font-weight: bold;
+}
+
+.bussdictEntry .REGISTERLAB {
+    color: #364395;
+    font-style: italic;
+}
+
+.bussdictEntry .RELATEDWD {
+    font-weight: bold;
+}
+
+.bussdictEntry .Sense {
+    display: block;
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.bussdictEntry .SIGNPOST {
+    background-color: gray;
+    color: white;
+    font-weight: bold;
+}
+
+.bussdictEntry .STRONG {
+    font-style: italic;
+}
+
+.bussdictEntry .Subsense {
+    display: block;
+    margin-left: 10px;
+}
+
+.bussdictEntry .SUPERL,
+.bussdictEntry .SYN,
+.bussdictEntry .T3PERSSING,
+.bussdictEntry .T3PERSSINGX,
+.bussdictEntry .UNCLASSIFIED {
+    font-weight: bold;
+}
+
+.bussdictEntry .USAGE {
+    display: none;
+}
+
+span.neutral {
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+}
+
+span.italic,
+span.infllab {
+    font-style: italic;
+    font-weight: normal;
+    font-family: Times New roman;
+}
+
+span.warning {
+    font-style: normal;
+    font-weight: bold;
+    color: red;
+}
+
+span.sensenum {
+    font-style: normal;
+    font-weight: bold;
+    margin-right: 5px;
+    margin-left: 3px;
+
+}
+
+span.synopp {
+    font-style: normal;
+    font-weight: bold;
+    color: darkblue;
+}
+
+.bussdictEntry .ColloBox,
+.bussdictEntry .ThesBox,
+.bussdictEntry .F2NBox,
+.bussdictEntry .GramBox,
+.bussdictEntry .UsageBox {
+    display: block;
+    border-style: solid;
+}
+
+.bussdictEntry .GramBox.nobox {
+    display: inline;
+    border-style: none;
+    background-color: none;
+}
+
+.bussdictEntry .GramBox.nobox .EXPL {
+    display: inline;
+}
+
+.bussdictEntry .HEADING,
+span.heading,
+.bussdictEntry .Gramref {
+    font-weight: bold;
+    font-size: 120%;
+    color: #364395;
+}
+
+.bussdictEntry .gramref {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.bussdictEntry .HEADING.newline {
+    display: block;
+}
+
+.bussdictEntry .SECHEADING,
+span.subheading {
+    display: block;
+    font-weight: bold;
+    font-style: italic;
+    text-decoration: underline;
+}
+
+.bussdictEntry .Collocate.newline,
+.bussdictEntry .Exponent,
+.bussdictEntry .GramBox .EXPL,
+.bussdictEntry .EXPL.newline {
+    display: block;
+}
+
+.bussdictEntry .Collocate.inline {
+    display: inline;
+}
+
+.bussdictEntry .COLLOC,
+.bussdictEntry .EXP,
+.bussdictEntry .EXPR {
+    font-weight: bold;
+}
+
+.bussdictEntry .COLLOC.key {
+    color: #364395;
+}
+
+span.keycollo {
+    font-weight: bold;
+    color: #364395;
+}
+
+.bussdictEntry .THESPROPFORM {
+    font-weight: bold;
+}
+
+.bussdictEntry .COLLEXA,
+.bussdictEntry .THESEXA,
+.bussdictEntry .GOODCOLLO {
+    font-style: italic;
+}
+
+.bussdictEntry .LearnerItem {
+    display: block;
+}
+
+.bussdictEntry .BADCOLLO,
+.bussdictEntry .BADEXA {
+    text-decoration: line-through;
+}
+
+.bussdictEntry .DEFBOLD {
+    font-weight: bold;
+}
+
+.bussdictEntry .CompareWord,
+.bussdictEntry .CompareWord,
+.bussdictEntry .EXP {
+    display: block;
+}
+
+.bussdictEntry .UNDERLINE {
+    text-decoration: underline;
+}
+
+.bussdictEntry .boxheader {
+    display: block;
+    background-color: #364395;
+    color: white;
+    font-weight: bold;
+}
+
+.bussdictEntry .SubEntry.embedded {
+    margin-top: -5px;
+    margin-bottom: 0px;
+    margin-left: 30px;
+}
+
+.bussdictEntry .SubEntry {
+    display: block;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 20px;
+}
+
+.bussdictEntry .SubEntry .HWD {
+    display: inline;
+    font-weight: bold;
+    font-size: 120%;
+    color: #364395;
+}
+
+/****** VERB TABLE *****/
+.verbTable .entry {
+    margin-bottom: 20px;
+}
+
+.verbTable .lemma {
+    color: black;
+    font-size: 120%;
+    font-weight: bold;
+    margin: 0 0 0 10px;
+}
+
+.verbTable table {
+    background-color: #fae660;
+    margin-bottom: 10px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.verbTable .Simple_Form .aux {
+    font-weight: bold;
+}
+
+.verbTable td {
+    padding: 0 10px;
+}
+
+.verbTable td.header {
+    background-color: #333333;
+    color: #fff;
+    padding: 0 0 0 10px;
+    font-size: 120%;
+}
+
+.verbTable td.col1 {
+    color: #333333;
+    padding: 20px 10px 0;
+    font-weight: bold;
+    font-size: 14px;
+    text-decoration: underline
+}
+
+.verbTable td.col2 {
+    color: gray;
+    width: 150px
+}
+
+.verbTable .view_more,
+.verbTable .view_less {
+    text-align: center;
+    font-weight: bold;
+    color: black;
+    padding: 40px 0 10px;
+}
+
+.verbTable .view_more span,
+.verbTable .view_less span {
+    cursor: pointer;
+}
+
+.verbTable .view_less {
+    display: none;
+}
+
+.verbTable .next_tenses {
+    display: none;
+}
+
+.verbTable .geo {
+    font-style: italic;
+    color: #000000;
+    font-size: normal;
+    font-weight: normal;
+}
+
+.verbTable .aux {
+    color: black;
+    font-weight: normal;
+}
+
+.verbTable .verb_form {
+    color: black;
+    font-weight: bold;
+}
+
+/***** EXAS ******/
+.exaGroup .exaEntry {
+    margin-bottom: 20px;
+    display: block;
+}
+
+.exaGroup .exaGroup {
+    display: block;
+    margin-bottom: 20px;
+}
+
+.exaGroup .title {
+    font-size: 110%;
+    font-weight: bold;
+    color: black;
+    display: block;
+    margin-left: 5px;
+    margin-top: 15px;
+}
+
+.exaGroup .exa {
+    display: block;
+    color: gray;
+    margin-left: 15px;
+}
+
+.exaGroup .NodeW {
+    font-weight: bold;
+}
+
+.asset {
+    margin-top: 30px;
+}
+
+/***** TOPIC ******/
+.Entry .topics_container {
+    display: table;
+}
+
+.Entry .related_topics {
+    padding: 0 4px 1px 0;
+    font-size: 16px;
+    font-family: Tahoma, Arial, Helvetica;
+    color: #000;
+}
+
+.Entry .topic,
+.topicCloud .topic_other {
+    color: red;
+    text-decoration: underline
+}
+
+.Entry .topic:hover,
+.topicCloud .topic_other:hover {
+    color: #4693db;
+}
+
+/*** WORD FAMILY ***/
+.pos {
+    color: green;
+    font-weight: normal;
+}
+
+.wordfams {
+    font-weight: bold;
+}
+
+.wordfams .crossRef, .wordfams .w {
+    margin: 0 6px;
+}
+
+.wordfams .crossRef {
+    border-bottom: thin dotted gray;
+}
+
+/*** ETYM ***/
+.etym .Head {
+    font-weight: bold;
+}
+
+.etym .Head .HOMNUM {
+    vertical-align: super;
+    font-size: 12pt;
+}
+
+/****** CSS TIDY FOR JAPANESE-E***************************/
+/*  4 sections: printing and used tags,                  */
+/*  xslt tags,                                           */
+/*  non-printing and used tags and finally               */
+/*  non-used tags (but in the dtd).                      */
+/*  tags are alphabetically ordered withi each category  */
+
+/**************PRINTING TAGS******************/
+.page {
+    font-family: arial, helvetica, sans-serif;
+    font-size: 12pt;
+    display: block;
+}
+
+.pagetitle {
+    font-size: 1.6em;
+    font-weight: bold;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.results {
+    font-size: 1.5em;
+}
+
+.view {
+    overflow: hidden;
+    position: relative;
+    width: 1px;
+    background-color: white;
+    margin-top: 20px;
+}
+
+.container {
+    position: absolute;
+    top: 0;
+    transition: all 0.7s ease;
+    left: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.prep {
+    margin-left: 3em;
+}
+
+#dot {
+    font-size: 14px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.inline {
+    display: inline-block;
+}
+
+.b1 {
+    vertical-align: middle;
+    padding-right: 10px;
+}
+
+h1 span {
+    color: #4064A3;
+    font-weight: normal;
+    font-size: smaller;
+    display: table;
+}
+
+h2 {
+    font-size: 1.4em;
+}
+
+.verbTable, .view_more, .view_less {
+    display: none;
+}
+
+/* ---------- Reference entries ---------- */
+.ref_entry {
+    margin-bottom: .375rem;
+    border: 1px solid #E6E6EB;
+    padding: 0 .5rem;
+    background-color: #FFF;
+}
+
+/* Headwords */
+.ref_entry .ref_head {
+    line-height: 1.2;
+    margin-bottom: .1875rem;
+    border-bottom: 1px solid #DEDEDE;
+    padding: .5rem 0 .3125rem 0;
+    font-size: 1.75rem;
+    font-weight: bold;
+}
+
+/* Entry body */
+.ref_entry .ref_body {
+}
+
+.ref_entry .ref_body .ref_item {
+    margin-bottom: .0625rem;
+    padding-left: .1875rem;
+}
+
+/* "→" */
+.ref_body .ref_item .ref_bullet {
+    margin-right: .3125rem;
+}
+
+/* Entry text */
+.ref_body .ref_item a {
+    display: inline-block;
+    color: #234B9A;
+    font-weight: bold;
+}
+.nav-ldoce {
+    float: right;
+}
+
+.nav-ldoce span {
+    margin-left: 4px;
+    padding: .2rem .2rem;
+    background-color: #e0e0e0;
+    color: #00a7d0;
+
+}
+
+.nav-ldoce span.active {
+    margin-left: 4px;
+    padding: .2rem .2rem;
+    background-color: #2d75d2;
+    color: white;
+}
+
+.PronCodes {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/redis/rueidis"
+	"os/signal"
 	"play-around/common"
+	"syscall"
 	"time"
 )
 
@@ -12,30 +14,26 @@ var redis rueidis.Client
 
 func main() {
 	redis = common.InitRedis()
-	//go connect("abc")
-	go connectInDedicated("abc")
-	time.Sleep(1 * time.Second)
-	//go connect("xyz")
-	go connectInDedicated("xyz")
-	time.Sleep(10 * time.Second)
-	go func() {
-		redis.Do(context.Background(), redis.B().Unsubscribe().Channel("abc").Build())
-	}()
-	go func() {
-		redis.Do(context.Background(), redis.B().Unsubscribe().Channel("xyz").Build())
-	}()
-	time.Sleep(50 * time.Second)
-	fmt.Println("End")
+	go connect("kaixin:test")
+
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	<-ctx.Done()
 }
 
 func connect(channel string) {
-	err := redis.Receive(context.Background(), redis.B().Subscribe().Channel(channel).Build(), func(msg rueidis.PubSubMessage) {
-		fmt.Println("Receive message:", msg.Message)
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	go func() {
+		time.Sleep(10 * time.Second)
+		cancelFunc()
+	}()
+	err := redis.Receive(ctx, redis.B().Ssubscribe().Channel(channel).Build(), func(msg rueidis.PubSubMessage) {
+		fmt.Println("receive message:", msg.Message)
 	})
 	if err != nil {
-		fmt.Println("Error when subscribing channel:", err)
+		fmt.Println("error when subscribing channel:", err)
 	}
-	fmt.Println("Release connection")
+	fmt.Println("release connection")
 }
 
 func connectInDedicated(channel string) {

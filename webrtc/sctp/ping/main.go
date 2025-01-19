@@ -38,7 +38,7 @@ func main() {
 			log.Panic(err)
 		}
 	}()
-	fmt.Println("created a client")
+	fmt.Println("created a lb")
 
 	stream, err := a.OpenStream(0, sctp.PayloadTypeWebRTCString)
 	if err != nil {

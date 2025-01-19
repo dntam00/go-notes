@@ -22,7 +22,7 @@ const (
 	DemoService_SayHello_FullMethodName = "/dnt.DemoService/SayHello"
 )
 
-// DemoServiceClient is the client API for DemoService service.
+// DemoServiceClient is the lb API for DemoService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DemoServiceClient interface {

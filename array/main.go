@@ -7,7 +7,9 @@ func main() {
 	//ints := make([]int, 2)
 	//ints = append(ints, 0)
 	//fmt.Println(len(ints))
-	access()
+
+	//access()
+	loop()
 }
 
 type data struct {
@@ -21,4 +23,20 @@ func access() {
 	fmt.Println(before.value)
 	arr[0] = data{value: 2}
 	fmt.Println(before.value)
+}
+
+type Char struct {
+	Char *string
+}
+
+func loop() {
+	var chars []Char
+	values := []string{"a", "b", "c"}
+	for _, v := range values {
+		fmt.Println("v: ", &v)
+		chars = append(chars, Char{Char: &v})
+	}
+	for _, v := range chars {
+		fmt.Println(*v.Char)
+	}
 }

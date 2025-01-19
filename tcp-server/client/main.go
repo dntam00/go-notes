@@ -14,11 +14,11 @@ func main() {
 	}
 	_ = conn.(*net.TCPConn).SetKeepAlive(false)
 
-	_, _ = conn.Write([]byte("Hello from client"))
+	_, _ = conn.Write([]byte("Hello from lb"))
 
 	go func() {
 		time.Sleep(400 * time.Second)
-		if _, err = conn.Write([]byte("Hello from client after 400 seconds")); err != nil {
+		if _, err = conn.Write([]byte("Hello from lb after 400 seconds")); err != nil {
 			fmt.Println("Error writing after 400 seconds:", err)
 		}
 	}()

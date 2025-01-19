@@ -7,6 +7,10 @@ import (
 )
 
 func main() {
+	encode64()
+}
+
+func encode() {
 	v := ""
 	bytes := []byte(v)
 	detector := chardet.NewTextDetector()
@@ -20,4 +24,14 @@ func main() {
 
 	streamByte, _ := base64.StdEncoding.DecodeString(v)
 	fmt.Println(string(streamByte))
+}
+
+func encode64() {
+
+	sbData := ""
+	dst := make([]byte, 3000)
+	bytes := []byte(sbData)
+	base64.URLEncoding.Encode(dst, bytes)
+
+	fmt.Println(string(dst))
 }

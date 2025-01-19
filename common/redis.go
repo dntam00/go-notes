@@ -10,7 +10,7 @@ import (
 )
 
 func InitRedis() rueidis.Client {
-	addresses := strings.Split("127.0.0.1:6379", ",")
+	addresses := strings.Split("127.0.0.1:7500", ",")
 
 	clientOption := rueidis.ClientOption{
 		Dialer: net.Dialer{
@@ -19,15 +19,15 @@ func InitRedis() rueidis.Client {
 		},
 		InitAddress: addresses,
 		Username:    "",
-		Password:    "turnserver",
+		Password:    "",
 		SelectDB:    0,
 	}
 	client, err := rueidis.NewClient(clientOption)
 	if err != nil {
 		panic(err)
 	}
-	pong := client.B().Ping().Build()
-	fmt.Println("Connected to Redis:", pong)
+	_ = client.B().Ping().Build()
+	fmt.Println("Connected to redis:", addresses)
 	return client
 }
 

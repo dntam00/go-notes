@@ -2,15 +2,26 @@ package main
 
 import (
 	"context"
-	"log"
-	"time"
-
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"log"
+	"os/signal"
 	pb "play-around/grpc/model"
+	"syscall"
+	"time"
 )
 
 func main() {
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure(), grpc.WithBlock())
+	for i := 0; i < 3; i++ {
+		go request()
+	}
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	<-ctx.Done()
+}
+
+func request() {
+	conn, err := grpc.NewClient("localhost:8443", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -20,8 +31,6 @@ func main() {
 
 	c := pb.NewDemoServiceClient(conn)
 
-	time.Sleep(2 * time.Second)
-
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
@@ -29,4 +38,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
+	time.Sleep(20 * time.Second)
 }

@@ -6,33 +6,39 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"os/signal"
 	pb "play-around/grpc/model"
-	"time"
+	"syscall"
 )
 
 type server struct {
+	serverId string
 	pb.UnimplementedDemoServiceServer
 }
 
 func (s *server) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloResponse, error) {
-	fmt.Println("receive message from client")
+	fmt.Printf("server %v receive message from lb\n", s.serverId)
 	return &pb.HelloResponse{Message: "Hello " + req.Name}, nil
 }
 
 func main() {
-	lis, err := net.Listen("tcp", ":50051")
+	go serve("50051")
+	go serve("50052")
+	go serve("50053")
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	<-ctx.Done()
+}
+
+func serve(port string) {
+	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterDemoServiceServer(s, &server{})
+	pb.RegisterDemoServiceServer(s, &server{serverId: port})
 
-	go func() {
-		time.Sleep(10 * time.Second)
-		_ = lis.Close() // Simulate abrupt server shutdown
-	}()
-
-	fmt.Println("Server is running on port 50051")
+	fmt.Println("Server is running on port " + port)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
