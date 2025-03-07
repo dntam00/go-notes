@@ -1,19 +1,28 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
 func main() {
-	ticker := time.NewTicker(time.Second)
-	go func() {
-		for range ticker.C {
-			fmt.Println("Tick")
-		}
-	}()
+	ticker := time.NewTicker(2 * time.Second)
 
-	time.Sleep(time.Second * 10)
-	ticker.Stop()
-	fmt.Println("Ticker stopped")
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	for range ticker.C {
+		select {
+		case <-ctx.Done():
+			ticker.Stop()
+			fmt.Println("Ticker stopped")
+			return
+		default:
+		}
+		fmt.Println("Tick at", time.Now())
+		time.Sleep(3 * time.Second)
+	}
 }
