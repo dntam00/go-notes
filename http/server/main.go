@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -19,7 +20,11 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/endpoint", func(writer http.ResponseWriter, request *http.Request) {
-		_, err := writer.Write([]byte("OK"))
+		hostname, err := os.Hostname()
+		if err != nil {
+			fmt.Println("error getting hostname: ", err)
+		}
+		_, err = writer.Write([]byte(hostname))
 		if err != nil {
 			fmt.Println("write error: ", err)
 		}

@@ -17,7 +17,7 @@ func main() {
 }
 
 func ApplyRule(rule string) {
-	askpassPath := "/Users/dntam/Projects/golang/play-around/grpc-ka/pf/askpass.sh" // Update this with the correct path
+	askpassPath := "<path>/askpass.sh" // Update this with the correct path
 	os.Setenv("SUDO_ASKPASS", askpassPath)
 	f, err := os.OpenFile(pfCustomFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
