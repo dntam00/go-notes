@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"slices"
+)
 
 func main() {
 
@@ -9,7 +13,8 @@ func main() {
 	//fmt.Println(len(ints))
 
 	//access()
-	loop()
+	//loop()
+	sort()
 }
 
 type data struct {
@@ -39,4 +44,23 @@ func loop() {
 	for _, v := range chars {
 		fmt.Println(*v.Char)
 	}
+}
+
+type SortObj struct {
+	name string
+}
+
+func sort() {
+	objs := make([]SortObj, 0)
+	objs = append(objs, SortObj{name: "a"})
+	objs = append(objs, SortObj{name: "ab"})
+	objs = append(objs, SortObj{name: "abc"})
+	sl := make([][]SortObj, 0)
+	sl = append(sl, objs)
+	for _, s := range sl {
+		slices.SortFunc(s, func(a, b SortObj) int {
+			return len(b.name) - len(a.name)
+		})
+	}
+	log.Println(sl[0])
 }
