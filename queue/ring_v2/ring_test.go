@@ -1,4 +1,4 @@
-package ring_v1
+package ring_v2
 
 import (
 	"errors"
@@ -6,10 +6,10 @@ import (
 )
 
 func TestRing(t *testing.T) {
-	size := 5
+	size := 4
 	rb := NewRingBuffer[string](size)
 
-	if rb.Capacity() != size {
+	if rb.Capacity() != (size - 1) {
 		t.Errorf("Expected capacity %d, got %d", size, rb.Capacity())
 	}
 
@@ -61,7 +61,7 @@ func TestRing(t *testing.T) {
 
 func TestRingBuffer(t *testing.T) {
 	// Test FIFO behavior
-	rb := NewRingBuffer[int](3)
+	rb := NewRingBuffer[int](4)
 	rb.Offer(1)
 	rb.Offer(2)
 	rb.Offer(3)

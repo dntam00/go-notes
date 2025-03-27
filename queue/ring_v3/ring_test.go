@@ -1,4 +1,4 @@
-package ring_v1
+package ring_v2
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestRing(t *testing.T) {
-	size := 5
+	size := uint32(4)
 	rb := NewRingBuffer[string](size)
 
 	if rb.Capacity() != size {
@@ -48,7 +48,7 @@ func TestRing(t *testing.T) {
 	}
 
 	// Test filling the buffer
-	for i := 0; i < size; i++ {
+	for i := uint32(0); i < size; i++ {
 		rb.Offer("item")
 	}
 
@@ -61,16 +61,18 @@ func TestRing(t *testing.T) {
 
 func TestRingBuffer(t *testing.T) {
 	// Test FIFO behavior
-	rb := NewRingBuffer[int](3)
+	rb := NewRingBuffer[int](4)
 	rb.Offer(1)
 	rb.Offer(2)
 	rb.Offer(3)
+	rb.Offer(4)
 
 	val1, _ := rb.Poll()
 	val2, _ := rb.Poll()
 	val3, _ := rb.Poll()
+	val4, _ := rb.Poll()
 
-	if *val1 != 1 || *val2 != 2 || *val3 != 3 {
+	if *val1 != 1 || *val2 != 2 || *val3 != 3 || *val4 != 4 {
 		t.Error("Buffer does not maintain FIFO order")
 	}
 
