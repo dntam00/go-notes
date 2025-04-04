@@ -1,6 +1,10 @@
 package ring_v2
 
-import "errors"
+import (
+	"errors"
+)
+
+// https://www.snellman.net/blog/archive/2016-12-13-ring-buffers/
 
 var (
 	ErrQueueFull  = errors.New("queue is full")
