@@ -38,7 +38,7 @@ func TestRingOverFlowCounter(t *testing.T) {
 	}
 
 	for i := uint64(0); i < capacity; i++ {
-		val := rb.Poll()
+		val, ok := rb.Poll()
 		cast, ok := val.(testStructure)
 		if !ok {
 			t.Errorf("failed to offer")
