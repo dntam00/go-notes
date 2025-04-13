@@ -17,9 +17,9 @@ func main() {
 
 	//log.Println(findPowerOfTwo(1022))
 	//log.Println(strconv.FormatInt(42, 2))
-	//unsafePointerUsage()
+	unsafePointerUsage()
 	//SliceAddr()
-	overflow()
+	//overflow()
 }
 
 func overflow() {

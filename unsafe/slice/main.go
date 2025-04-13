@@ -9,11 +9,11 @@ import (
 )
 
 // https://medium.com/@philbrainy/go-slices-demystified-a-deep-dive-into-memory-layout-and-behavior-59cffd1a49ca
+// https://medium.com/codex/go-interface-101-a99943d22bd9
 
 func main() {
-	ModifySlice()
-}
 
+}
 func modify() {
 	s := make([]int, 5, 5)
 	s[0] = 1
@@ -27,6 +27,38 @@ func modify() {
 	log.Println(newArray)
 
 	log.Printf("After: len=%d, cap=%d, ptr=%p, sAddr=%p\n", len(newArray), cap(newArray), newArray, &newArray)
+}
+
+func SliceInterface() {
+	s := make([]interface{}, 2)
+	log.Println("slice addr:", (unsafe.Pointer)(&s))
+	fmt.Println("Alignof(interface{}):", unsafe.Alignof(s[0]))
+	log.Println("slice [0] addr:", (unsafe.Pointer)(&s[0]))
+	log.Println("slice [1] addr:", (unsafe.Pointer)(&s[1]))
+	log.Println("space addr:", (uintptr)((unsafe.Pointer)(&s[1]))-(uintptr)((unsafe.Pointer)(&s[0])))
+	log.Println("slice converted addr:", (*unsafe.Pointer)((unsafe.Pointer)(&s[0])))
+
+	v1 := "abcxyz"
+	var vi1 interface{}
+	vi1 = v1
+	atomic.StorePointer((*unsafe.Pointer)((unsafe.Pointer)(&s[0])), unsafe.Pointer(&vi1))
+	v2 := "hihihaha"
+	var vi2 interface{}
+	vi2 = v2
+	atomic.StorePointer((*unsafe.Pointer)((unsafe.Pointer)(&s[1])), unsafe.Pointer(&vi2))
+
+	val := *(*interface{})(atomic.LoadPointer((*unsafe.Pointer)((unsafe.Pointer)(&s[0]))))
+	log.Println("slice [0] value:", val)
+
+	atomic.StorePointer((*unsafe.Pointer)((unsafe.Pointer)(&s[1])), unsafe.Pointer(nil))
+
+	pointer := atomic.LoadPointer((*unsafe.Pointer)((unsafe.Pointer)(&s[1])))
+	if pointer == nil {
+		log.Println("slice [1] is nil")
+		return
+	}
+	val = *(*interface{})(pointer)
+	log.Println("slice [1] value:", val)
 }
 
 func SliceAddr() {

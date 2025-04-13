@@ -4,12 +4,21 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"log"
 	"strconv"
 )
 
 // convert int to byte chunks.
 func main() {
-	convertToBytes()
+
+	//convertToBytes()
+	// shiftBit()
+}
+
+func shiftBit() {
+	log.Println(strconv.FormatInt(1<<3|2, 2))
+	log.Println(strconv.FormatInt(1<<3|2, 10))
+	log.Println(strconv.FormatInt(1<<3|2, 16))
 }
 
 func convert() {

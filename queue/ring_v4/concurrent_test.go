@@ -2,24 +2,17 @@ package ring_v4
 
 import (
 	gonanoid "github.com/matoous/go-nanoid"
+)
+
+import (
 	"log"
 	"sync"
 	"testing"
 )
 
 var (
-	size = 1000000
+	size = 10000000
 )
-
-func Test2P1C(t *testing.T) {
-	data := generateId()
-	buffer := NewRingBuffer(1024)
-	wg := sync.WaitGroup{}
-	go produce(buffer, data)
-	wg.Add(1)
-	consumer(buffer, data, &wg)
-	wg.Wait()
-}
 
 func Test1P1C(b *testing.T) {
 	for i := 0; i < 1; i++ {
@@ -27,38 +20,39 @@ func Test1P1C(b *testing.T) {
 		buffer := NewRingBuffer(1024)
 		wg := sync.WaitGroup{}
 		wg.Add(1)
-		go produce1(buffer, data)
+		go singleProduce(buffer, data)
 		consumer(buffer, data, &wg)
 		wg.Wait()
 	}
 }
 
-func produce1(buffer *RingBuffer, data map[string]*itemTest) {
+func Test2P1CKaiXin(t *testing.T) {
+	data := generateId()
+	buffer := NewRingBuffer(1024)
+	wg := sync.WaitGroup{}
+	go retryProduce(buffer, data)
+	wg.Add(1)
+	consumer(buffer, data, &wg)
+	wg.Wait()
+}
+
+func singleProduce(buffer *Ring, data map[string]*itemTest) {
 	for _, v := range data {
 		id := v.id
 		offer := false
 		for !offer {
 			offer = buffer.Offer(id)
 		}
-		//item, ok := data[id]
-		//if !ok {
-		//	panic("item not found")
-		//}
-		//item.write++
 	}
-	log.Println("finish produce")
+	log.Println("finish retryProduce")
 }
 
-func produce(buffer *RingBuffer, data map[string]*itemTest) {
+func retryProduce(buffer *Ring, data map[string]*itemTest) {
 	for _, v := range data {
 		id := v.id
 		offer := buffer.Offer(id)
 		if !offer {
 			go func(idStr string) {
-				//b := false
-				//for !b {
-				//	b = buffer.Offer(idStr)
-				//}
 				for !buffer.Offer(idStr) {
 
 				}
@@ -76,10 +70,10 @@ func produce(buffer *RingBuffer, data map[string]*itemTest) {
 		}
 		item.write++
 	}
-	log.Println("finish produce")
+	log.Println("finish retryProduce")
 }
 
-func consumer(buffer *RingBuffer, data map[string]*itemTest, wg *sync.WaitGroup) {
+func consumer(buffer *Ring, data map[string]*itemTest, wg *sync.WaitGroup) {
 	count := 0
 	for {
 		id, ok := buffer.Poll()
@@ -89,8 +83,12 @@ func consumer(buffer *RingBuffer, data map[string]*itemTest, wg *sync.WaitGroup)
 		}
 		count++
 		idStr, ok := id.(string)
+		if id == nil {
+			log.Println("nil id type", count)
+			break
+		}
 		if !ok {
-			log.Println("invalid id type", count)
+			log.Println("invalid id type", count, id)
 			continue
 			//log.Println("invalid id type", buffer.read, buffer.write)
 			//continue
@@ -103,7 +101,7 @@ func consumer(buffer *RingBuffer, data map[string]*itemTest, wg *sync.WaitGroup)
 			log.Println("item written 1:", item)
 			//time.Sleep(time.Millisecond * 5000)
 			//log.Println("item written 2:", item)
-			//panic("expect read less than 1")
+			panic("expect read less than 1")
 		}
 		item.read++
 		if count == size {
