@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	encode64()
+	encode()
 }
 
 func encode() {
@@ -22,7 +22,7 @@ func encode() {
 
 	fmt.Printf("Detected encoding: %s\n", result.Charset)
 
-	streamByte, _ := base64.StdEncoding.DecodeString(v)
+	streamByte, _ := base64.URLEncoding.DecodeString(v)
 	fmt.Println(string(streamByte))
 }
 

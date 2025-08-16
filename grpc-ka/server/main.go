@@ -17,15 +17,17 @@ type server struct {
 }
 
 func (s *server) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloResponse, error) {
-	log.Printf("server %v receive message from lb\n", s.serverId)
+	log.Printf("server %v start to recieve\n", s.serverId)
+	time.Sleep(45 * time.Second)
+	log.Printf("server %v start to return\n", s.serverId)
 	return &pb.HelloResponse{Message: "Hello " + req.Name}, nil
 }
 
 func main() {
 	grpcOpt1 := grpc.KeepaliveParams(
 		keepalive.ServerParameters{
-			MaxConnectionAge:      time.Duration(1000) * time.Second,
-			MaxConnectionAgeGrace: time.Duration(1000) * time.Second,
+			MaxConnectionAge:      time.Duration(10) * time.Second,
+			MaxConnectionAgeGrace: time.Duration(30) * time.Second,
 			Time:                  time.Duration(1000) * time.Second,
 			Timeout:               time.Duration(5) * time.Second,
 			MaxConnectionIdle:     time.Duration(100) * time.Second,

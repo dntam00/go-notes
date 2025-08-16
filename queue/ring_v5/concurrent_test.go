@@ -1,4 +1,4 @@
-package ring_v4
+package ring_v5
 
 import (
 	"fmt"
@@ -14,24 +14,12 @@ import (
 )
 
 var (
-	size = 2000000
+	size = 1000000
 )
-
-func Test1P1C(b *testing.T) {
-	for i := 0; i < 1; i++ {
-		data := generateId()
-		buffer := NewRingBuffer(1024)
-		wg := sync.WaitGroup{}
-		wg.Add(1)
-		go singleProduce(buffer, data)
-		consumer(buffer, data, &wg)
-		wg.Wait()
-	}
-}
 
 func Test2P1CKaiXin(t *testing.T) {
 	data := generateId()
-	buffer := NewRingBuffer(1024)
+	buffer := NewRingBuffer[string](1024)
 
 	element := buffer.Element()
 	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&element))
@@ -45,18 +33,7 @@ func Test2P1CKaiXin(t *testing.T) {
 	wg.Wait()
 }
 
-func singleProduce(buffer *Ring, data map[string]*itemTest) {
-	for _, v := range data {
-		id := v.id
-		offer := false
-		for !offer {
-			offer = buffer.Offer(id)
-		}
-	}
-	log.Println("finish retryProduce")
-}
-
-func retryProduce(buffer *Ring, data map[string]*itemTest) {
+func retryProduce(buffer *Ring[string], data map[string]*itemTest) {
 	for _, v := range data {
 		id := v.id
 		offer := buffer.Offer(id)
@@ -82,7 +59,7 @@ func retryProduce(buffer *Ring, data map[string]*itemTest) {
 	log.Println("finish retryProduce")
 }
 
-func consumer(buffer *Ring, data map[string]*itemTest, wg *sync.WaitGroup) {
+func consumer(buffer *Ring[string], data map[string]*itemTest, wg *sync.WaitGroup) {
 	count := 0
 	for {
 		id, ok := buffer.Poll()
@@ -90,19 +67,19 @@ func consumer(buffer *Ring, data map[string]*itemTest, wg *sync.WaitGroup) {
 			//runtime.Gosched()
 			continue
 		}
-		count++
-		idStr, ok := id.(string)
 		if id == nil {
 			log.Println("nil id type", count)
 			break
 		}
-		if !ok {
-			log.Println("invalid id type", count, id)
-			continue
-			//log.Println("invalid id type", buffer.read, buffer.write)
-			//continue
-		}
-		item, ok := data[idStr]
+		count++
+		//idStr, ok := (id).(string)
+		//if !ok {
+		//	log.Println("invalid id type", count, id)
+		//	continue
+		//	//log.Println("invalid id type", buffer.read, buffer.write)
+		//	//continue
+		//}
+		item, ok := data[*id]
 		if !ok {
 			panic("item not found")
 		}
@@ -116,6 +93,7 @@ func consumer(buffer *Ring, data map[string]*itemTest, wg *sync.WaitGroup) {
 		if count == size {
 			break
 		}
+		//log.Println("count:", count)
 	}
 	log.Println("finish consumer")
 	wg.Done()

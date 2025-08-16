@@ -32,7 +32,8 @@ func InitRedis() rueidis.Client {
 }
 
 func InitWithLock() (rueidis.Client, rueidislock.Locker) {
-	addresses := strings.Split("127.0.0.1:6379", ",")
+	address := "127.0.0.1:6379"
+	addresses := strings.Split(address, ",")
 
 	clientOption := rueidis.ClientOption{
 		Dialer: net.Dialer{
@@ -48,12 +49,15 @@ func InitWithLock() (rueidis.Client, rueidislock.Locker) {
 	if err != nil {
 		panic(err)
 	}
-	pong := client.B().Ping().Build()
-	fmt.Println("Connected to Redis:", pong)
+	_ = client.B().Ping().Build()
+	fmt.Println("connected to redis server:", address)
 
 	lockerOption := rueidislock.LockerOption{
-		ClientOption: clientOption,
-		KeyValidity:  time.Second * 100,
+		KeyPrefix:      "kaixin",
+		ClientOption:   clientOption,
+		KeyValidity:    time.Second * 5,
+		ExtendInterval: time.Second * 1,
+		TryNextAfter:   time.Millisecond * 200,
 	}
 	locker, _ := rueidislock.NewLocker(lockerOption)
 

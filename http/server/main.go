@@ -1,14 +1,43 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
-	"os"
 	"time"
 )
+
+type Event struct {
+	AppID       string    `json:"app_id"`
+	UserIDByApp string    `json:"user_id_by_app"`
+	EventName   string    `json:"event_name"`
+	Timestamp   string    `json:"timestamp"`
+	Sender      Sender    `json:"sender"`
+	Recipient   Recipient `json:"recipient"`
+	Message     Message   `json:"message"`
+	Source      string    `json:"source"`
+	Follower    Follower  `json:"follower"`
+}
+
+type Follower struct {
+	ID string `json:"id"`
+}
+
+type Sender struct {
+	ID string `json:"id"`
+}
+
+type Recipient struct {
+	ID string `json:"id"`
+}
+
+type Message struct {
+	MsgID string `json:"msg_id"`
+	Text  string `json:"text"`
+}
 
 func main() {
 	headersOk := handlers.AllowedHeaders([]string{
@@ -20,14 +49,33 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/endpoint", func(writer http.ResponseWriter, request *http.Request) {
-		hostname, err := os.Hostname()
+
+		time.Sleep(3 * time.Second)
+		fmt.Println("request header", request.Header)
+
+		var event Event
+
+		err := json.NewDecoder(request.Body).Decode(&event)
 		if err != nil {
-			fmt.Println("error getting hostname: ", err)
+			http.Error(writer, "Invalid request body", http.StatusBadRequest)
+			fmt.Println("Error decoding JSON:", err)
+			return
 		}
-		_, err = writer.Write([]byte(hostname))
-		if err != nil {
-			fmt.Println("write error: ", err)
-		}
+
+		// encode event to json
+		eventJson, err := json.Marshal(event)
+
+		fmt.Printf("body: %+v", string(eventJson))
+
+		//hostname, err := os.Hostname()
+		//if err != nil {
+		//	fmt.Println("error getting hostname: ", err)
+		//}
+		writer.WriteHeader(http.StatusOK)
+		//_, err = writer.Write([]byte(hostname))
+		//if err != nil {
+		//	fmt.Println("write error: ", err)
+		//}
 	}).Methods("POST")
 
 	srv := &http.Server{

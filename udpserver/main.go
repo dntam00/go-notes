@@ -1,25 +1,33 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net"
-	"os/signal"
-	"syscall"
 )
 
 func main() {
-	conn, _ := net.ListenUDP("udp", &net.UDPAddr{Port: 36890})
-	_, err := conn.WriteTo([]byte("hello"), &net.UDPAddr{IP: net.ParseIP(""), Port: 12345})
+	addr := &net.UDPAddr{IP: net.ParseIP("0.0.0.0"), Port: 5000}
+	conn, err := net.ListenUDP("udp", addr)
 	if err != nil {
-		fmt.Println("send 1: ", err)
+		fmt.Println("Error listening:", err)
+		return
 	}
-	_, err = conn.WriteTo([]byte("hello"), &net.UDPAddr{IP: net.ParseIP(""), Port: 12345})
-	if err != nil {
-		fmt.Println("send 2: ", err)
+	defer conn.Close()
+	fmt.Println("UDP server listening on", addr)
+
+	buf := make([]byte, 1024)
+	for {
+		n, clientAddr, err := conn.ReadFromUDP(buf)
+		if err != nil {
+			fmt.Println("Read error:", err)
+			continue
+		}
+		fmt.Printf("Received from %v: %s\n", clientAddr, string(buf[:n]))
+
+		// Send response to client
+		_, err = conn.WriteToUDP([]byte("Hello from server"), clientAddr)
+		if err != nil {
+			fmt.Println("Write error:", err)
+		}
 	}
-	fmt.Println("finish")
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
-	<-ctx.Done()
 }

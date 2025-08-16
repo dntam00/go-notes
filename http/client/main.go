@@ -30,29 +30,32 @@ func main() {
 
 	url := "http://127.0.0.1:7888/endpoint"
 
-	for i := 0; i < 1; i++ {
-		go func() {
-			req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, url, nil)
-			if err != nil {
-				fmt.Println("error: ", err)
-			}
-			req.Header.Set("Content-Type", "application/json")
+	for i := 0; i < 5; i++ {
+		//go func() {
+		timeout, cancelFunc := context.WithTimeout(context.Background(), 2*time.Second)
 
-			doRequest(client, req)
-		}()
-	}
-
-	go func() {
-		time.Sleep(9 * time.Second)
-		fmt.Println("start second request")
-		req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, url, nil)
+		req, err := http.NewRequestWithContext(timeout, http.MethodPost, url, nil)
 		if err != nil {
 			fmt.Println("error: ", err)
 		}
 		req.Header.Set("Content-Type", "application/json")
 
 		doRequest(client, req)
-	}()
+		cancelFunc()
+		//}()
+	}
+
+	//go func() {
+	//	time.Sleep(9 * time.Second)
+	//	fmt.Println("start second request")
+	//	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, url, nil)
+	//	if err != nil {
+	//		fmt.Println("error: ", err)
+	//	}
+	//	req.Header.Set("Content-Type", "application/json")
+	//
+	//	doRequest(client, req)
+	//}()
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()

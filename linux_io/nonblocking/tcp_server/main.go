@@ -60,7 +60,7 @@ func main() {
 	// Main event loop
 	for {
 		// Accept incoming connections (non-blocking)
-		log.Println("start listen")
+		//log.Println("start listen")
 		nfd, _, err := syscall.Accept(fd)
 		if err != nil {
 			if errors.Is(err, syscall.EAGAIN) || errors.Is(err, syscall.EWOULDBLOCK) {
@@ -96,7 +96,8 @@ func handleConnection(fd int) {
 		if err != nil {
 			if errors.Is(err, syscall.EAGAIN) || errors.Is(err, syscall.EWOULDBLOCK) {
 				// No data available, continue polling
-				time.Sleep(100 * time.Millisecond)
+				log.Printf("No data available on socket %d, retrying...\n", fd)
+				time.Sleep(1000 * time.Millisecond)
 				continue
 			}
 			log.Println("Error reading from socket:", err)

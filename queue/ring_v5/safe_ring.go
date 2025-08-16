@@ -1,28 +1,22 @@
-package ring_v4
+package ring_v5
 
 import (
 	"fmt"
-	"log"
-	"runtime"
 	"sync/atomic"
 	"unsafe"
 )
 
-// https://www.lenshood.dev/2021/04/19/lock-free-ring-buffer/
-
-type Ring struct {
-	read  uint64
-	write uint64
-	//element  []unsafe.Pointer
-	element  []interface{}
+type Ring[T any] struct {
+	read     uint64
+	write    uint64
+	element  []*T
 	capacity uint64
 	mask     uint64
 }
 
-func NewRingBuffer(capacity uint64) *Ring {
-	return &Ring{
-		//element:  make([]unsafe.Pointer, capacity),
-		element:  make([]interface{}, capacity),
+func NewRingBuffer[T any](capacity uint64) *Ring[T] {
+	return &Ring[T]{
+		element:  make([]*T, capacity),
 		capacity: capacity,
 		mask:     capacity - 1,
 		write:    0,
@@ -30,7 +24,7 @@ func NewRingBuffer(capacity uint64) *Ring {
 	}
 }
 
-func (r *Ring) Offer(v interface{}) bool {
+func (r *Ring[T]) Offer(v T) bool {
 	oldRead := atomic.LoadUint64(&r.read)
 	oldWrite := atomic.LoadUint64(&r.write)
 	if r.IsFull(oldRead, oldWrite) {
@@ -49,29 +43,16 @@ func (r *Ring) Offer(v interface{}) bool {
 		return false
 	}
 
-	//val := v    // assign to new variable
-	//ptr := &val // take its address — now val escapes
-	vCopy := new(interface{})
-	*vCopy = v
-
-	runtime.SetFinalizer(vCopy, func(o *interface{}) {
-		fmt.Printf("object with id %v has been garbage collected\n", *vCopy)
-	})
-
-	log.Printf("stored element: %p\n", vCopy)
-	debugPointer(unsafe.Pointer(vCopy))
+	val := v    // assign to new variable
+	ptr := &val // take its address — now val escapes
+	//log.Printf("address of stored element: %p\n", ptr)
 
 	//newV := v
-	//atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&r.element[newWrite&r.mask])), unsafe.Pointer(ptr))
-	// Store the pointer to our heap-allocated interface value
-	atomic.StorePointer(
-		(*unsafe.Pointer)(unsafe.Pointer(&r.element[newWrite&r.mask])),
-		unsafe.Pointer(vCopy),
-	)
+	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&r.element[newWrite&r.mask])), unsafe.Pointer(ptr))
 	return true
 }
 
-func (r *Ring) Poll() (interface{}, bool) {
+func (r *Ring[T]) Poll() (*T, bool) {
 	oldRead := atomic.LoadUint64(&r.read)
 	oldWrite := atomic.LoadUint64(&r.write)
 	if r.IsEmpty(oldRead, oldWrite) {
@@ -92,8 +73,8 @@ func (r *Ring) Poll() (interface{}, bool) {
 		//log.Println("concurrent read")
 		return nil, false
 	}
-	debugPointer(node)
-	val := *(*interface{})(node)
+	//debugPointer(node)
+	val := (*T)(node)
 	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&r.element[newRead&r.mask])), nil)
 	return val, true
 }
@@ -128,46 +109,47 @@ type interfaceHeader struct {
 
 func debugPointer(ptr unsafe.Pointer) {
 	if ptr == nil {
-		fmt.Println("nil pointer")
+		fmt.Println("Nil pointer")
 		return
 	}
 
-	fmt.Printf("dump pointer address: %p\n", ptr)
+	fmt.Printf("Pointer address: %p\n", ptr)
 
 	casted := (*eface)(ptr)
 	if casted == nil {
-		fmt.Println("casted pointer is nil")
+		fmt.Println("Casted pointer is nil")
 		return
 	}
 
 	if casted._type.kind != 24 {
-		panic("not kind string" + fmt.Sprintf("- type: %d - address: %p", casted._type.kind, ptr))
+		fmt.Printf("Kind: %d\n", casted._type.kind)
+		panic("not kind string")
 	}
 
 	// Carefully dereference to interface{}
 	value := *(*interface{})(ptr)
 
 	if value == nil {
-		fmt.Println("value is nil")
+		fmt.Println("Value is nil")
 		return
 	}
-	fmt.Printf("type: %T\n", value)
-	fmt.Printf("value: %v\n", value)
-	fmt.Printf("size: %v\n", unsafe.Sizeof(value))
+	fmt.Printf("Type: %T\n", value)
+	fmt.Printf("Value: %v\n", value)
+	fmt.Printf("Size: %v\n", unsafe.Sizeof(value))
 }
 
-func (r *Ring) IsFull(read uint64, write uint64) bool {
+func (r *Ring[T]) IsFull(read uint64, write uint64) bool {
 	return write-read >= r.capacity
 }
 
-func (r *Ring) IsEmpty(read uint64, write uint64) bool {
+func (r *Ring[T]) IsEmpty(read uint64, write uint64) bool {
 	return (write < read) || (read-write == 0)
 }
 
-func (r *Ring) Size() uint64 {
+func (r *Ring[T]) Size() uint64 {
 	return r.write - r.read
 }
 
-func (r *Ring) Element() []interface{} {
+func (r *Ring[T]) Element() []*T {
 	return r.element
 }

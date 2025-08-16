@@ -12,8 +12,86 @@ import (
 // https://medium.com/codex/go-interface-101-a99943d22bd9
 
 func main() {
-
+	storePtr()
 }
+
+type eface struct {
+	_type *_type         // Pointer to type information
+	data  unsafe.Pointer // Pointer to data
+}
+
+type _type struct {
+	size       uintptr
+	ptrdata    uintptr
+	hash       uint32
+	tflag      uint8
+	align      uint8
+	fieldAlign uint8
+	kind       uint8
+	// These fields help in identifying types
+	equal  func(unsafe.Pointer, unsafe.Pointer) bool
+	gcdata unsafe.Pointer
+}
+
+func storePtr() {
+	s := make([]interface{}, 2)
+
+	var v1 interface{}
+	v1 = "hello"
+
+	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&s[0])), unsafe.Pointer(&v1))
+
+	log.Printf("address of v1: %p\n", &v1)
+
+	var v2 interface{}
+	v2 = "world"
+	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&s[1])), unsafe.Pointer(&v2))
+
+	log.Printf("address of v1: %p\n", &v2)
+
+	inspectSlice(s)
+}
+
+func loadPtr() {
+	s := make([]interface{}, 2)
+	var v1 interface{}
+	v1 = "hello"
+	s[0] = v1
+	var v2 interface{}
+	v2 = "world"
+	s[1] = v2
+
+	inspectSlice(s)
+}
+
+func inspectSlice(s []interface{}) {
+	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&s))
+	dataAddr := unsafe.Pointer(sliceHeader.Data)
+	log.Printf("address of slice: %p\n", dataAddr)
+
+	log.Println("slice addr:", (unsafe.Pointer)(&s))
+	log.Println("slice addr [0]:", (unsafe.Pointer)(&s[0]))
+	log.Println("slice addr [1]:", (unsafe.Pointer)(&s[1]))
+
+	//
+	loadPtr0 := atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&s[0])))
+	log.Printf("load ptr addr [0]: %p\n", loadPtr0)
+	log.Println("load ptr value [0]:", &s[0])
+	loadPtr1 := atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&s[1])))
+	log.Printf("load ptr addr [1]: %p\n", loadPtr1)
+
+	//// plus 8 byte to get address of data address
+	//valuePtr1 := (unsafe.Pointer)(((uintptr)(unsafe.Pointer(&s[1]))) + 8)
+	//val := atomic.LoadPointer((*unsafe.Pointer)(valuePtr1))
+	//s1 := *(*string)(val)
+	//log.Printf("value slot 1: %s\n", s1)
+	//log.Printf("load ptr addr [1]: %p\n", loadPtr1)
+	//log.Println("load ptr value [1]:", &s[1])
+
+	dataType := (*eface)(loadPtr0)
+	log.Printf("interface{} type: %d\n", dataType._type.kind)
+}
+
 func modify() {
 	s := make([]int, 5, 5)
 	s[0] = 1
