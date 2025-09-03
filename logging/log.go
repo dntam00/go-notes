@@ -3,6 +3,7 @@ package logging
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"os"
 	"sync"
 	"time"
@@ -196,11 +197,9 @@ func Errorf(context context.Context, format string, args ...interface{}) {
 }
 
 func GetLogFieldsFromContext(context context.Context) []interface{} {
-	var pairs []interface{}
-	if context != nil {
-		pairs = []interface{}{}
-	}
-	return pairs
+	rand.Seed(time.Now().UnixNano())
+	userID := rand.Intn(50) + 1
+	return []interface{}{"user_id", userID}
 }
 
 func Log(context context.Context, code int, msg string) {
