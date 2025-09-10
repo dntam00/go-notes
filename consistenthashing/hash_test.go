@@ -1,101 +1,189 @@
 package consistenthashing
 
-import "testing"
+import (
+	"fmt"
+	"math"
+	"testing"
+)
 
 func TestInitRing(t *testing.T) {
-	// Test data
-	size := 100
+	size := math.MaxUint32
 	servers := []string{"server1", "server2", "server3", "server4"}
 
-	// Call the fixed function
 	r := initRing(size, servers)
 
-	// Verify ring is initialized correctly
 	if r.size != size {
 		t.Errorf("Expected ring size to be %d, got %d", size, r.size)
 	}
 
-	// Verify all servers are added
 	if len(r.servers) != len(servers) {
 		t.Errorf("Expected %d servers, got %d", len(servers), len(r.servers))
 	}
 
-	// Verify server ranges
-	d := size / len(servers)
-	from := 0
-	for i, server := range servers {
-		expected := []int{from, from + d}
-		actual := r.servers[server]
-
-		if len(actual) != 2 || actual[0] != expected[0] || actual[1] != expected[1] {
-			t.Errorf("Server %d (%s): expected range %v, got %v",
-				i, server, expected, actual)
-		}
-
-		from = from + d
+	if len(r.servers) != len(servers) {
+		t.Errorf("Expected %d servers, got %d", len(servers), len(r.servers))
 	}
 }
 
-func TestRingServeAndGet(t *testing.T) {
-	// Initialize the ring
-	size := 100
+func TestStoreAndGet(t *testing.T) {
+	size := math.MaxUint32
 	servers := []string{"server1", "server2", "server3", "server4"}
 	r := initRing(size, servers)
 
-	// Test values to add to the ring
-	testValues := []int{5, 25, 55, 75, 95}
+	_, err := r.Store("key_1", "value_1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = r.Store("key_2", "value_2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	get, err := r.Get("key_1")
+	if err != nil || get != "value_1" {
+		t.Errorf("expect `value_1`, get error: %v", get)
+	}
+}
 
-	// Test serving values to the ring
-	for _, val := range testValues {
-		err := r.serve(val)
-		if err != nil {
-			t.Errorf("Failed to serve value %d: %v", val, err)
-		}
+type requestAndExpect struct {
+	hash   uint32
+	expect string
+}
+
+func TestBinarySearch(t *testing.T) {
+	servers := []*Server{
+		{
+			id:        "server_1",
+			databases: nil,
+			hashVal:   10,
+		},
+		{
+			id:        "server_2",
+			databases: nil,
+			hashVal:   100,
+		},
+		{
+			id:        "server_3",
+			databases: nil,
+			hashVal:   1000,
+		},
+		{
+			id:        "server_4",
+			databases: nil,
+			hashVal:   10000,
+		},
 	}
 
-	// Test getting values from the ring
-	for _, val := range testValues {
-		node, err := r.get(val)
-		if err != nil {
-			t.Errorf("Failed to get value %d: %v", val, err)
-		}
-		if node.val != val {
-			t.Errorf("Expected node value %d, got %d", val, node.val)
-		}
+	targets := []requestAndExpect{
+		{1, "server_1"},
+		{9, "server_1"},
+		{10, "server_1"},
+		{100, "server_2"},
+		{1_000, "server_3"},
+		{9_999, "server_4"},
+		{10_000, "server_4"},
+		{10_001, "server_1"},
 	}
 
-	// Test getting a non-existent value
-	nonExistentVal := 999
-	_, err := r.get(nonExistentVal)
-	if err != ErrNotFound {
-		t.Errorf("Expected ErrNotFound for non-existent value, got %v", err)
+	for _, target := range targets {
+		_, server := binarySearch(servers, target.hash)
+		if server.id != target.expect {
+			t.Errorf("Expected %s, got %s", target.expect, server.id)
+		}
 	}
+}
 
-	// Test value distribution across servers
-	serverCount := make(map[string]int)
-	for i := 0; i < size; i++ {
-		// Serve each value in the range
-		err := r.serve(i)
+func TestAddServer(t *testing.T) {
+	size := math.MaxUint32
+	servers := []string{"server1", "server2", "server3", "server4"}
+	r := initRing(size, servers)
+	for _, server := range r.servers {
+		fmt.Println(server.hashVal)
+	}
+	tobeAddedServer := "random_key_31"
+	tobeAddedHash := r.hashFunc([]byte(tobeAddedServer))
+	fmt.Println(tobeAddedHash)
+	inRange := findKeyInRange(r, 5, r.servers[0].hashVal, tobeAddedHash)
+	for _, v := range inRange {
+		_, err := r.Store(v, v)
 		if err != nil {
-			t.Errorf("Failed to serve value %d: %v", i, err)
+			t.Fatal(err)
+		}
+	}
+	movedKey, err := r.AddServer(tobeAddedServer)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if movedKey != 5 {
+		t.Errorf("expect moved key to be 5, got %d", movedKey)
+	}
+	for _, v := range inRange {
+		val, err := r.Get(v)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if val != v {
+			t.Errorf("Expected val to be %s, got %s", v, val)
+		}
+	}
+}
+
+func findKeyInRange(r *ring, size int, start, end uint32) []string {
+	var result []string
+	attempts := 0
+	maxAttempts := size * 1_000_000_000
+
+	for len(result) < size && attempts < maxAttempts {
+		// Generate random string
+		key := fmt.Sprintf("random_key_%d", attempts)
+
+		// Calculate hash value for the key
+		hashVal := r.hashFunc([]byte(key))
+
+		// Check if hash is in range [start, end]
+		var inRange bool
+		if start <= end {
+			inRange = hashVal > start && hashVal <= end
+		} else {
+			// Handle wrap-around case (e.g., start=4000000000, end=1000000000)
+			inRange = hashVal >= start || hashVal <= end
 		}
 
-		// Find which server it went to
-		hashedVal := r.hash(i)
-		for server, rangeVals := range r.servers {
-			if hashedVal >= rangeVals[0] && hashedVal < rangeVals[1] {
-				serverCount[server]++
-				break
+		if inRange {
+			result = append(result, key)
+		}
+
+		attempts++
+	}
+
+	return result
+}
+
+func TestRemoveServer(t *testing.T) {
+	size := math.MaxUint32
+	servers := []string{"server1", "server2", "server3", "server4"}
+	r := initRing(size, servers)
+
+	_, _ = r.Store("key_1", "value_1")
+	_, _ = r.Store("key_2", "value_2")
+	_, _ = r.Store("key_3", "value_3")
+	_, _ = r.Store("key_4", "value_4")
+	_, _ = r.Store("key_5", "value_5")
+
+	for _, server := range r.servers {
+		if len(server.databases) > 0 {
+			err := r.RemoveServer(server.id)
+			if err != nil {
+				t.Errorf("Remove server %s failed: %v", server.id, err)
 			}
+			break
 		}
 	}
-
-	// Verify each server got approximately the expected number of values
-	expectedPerServer := size / len(servers)
-	for server, count := range serverCount {
-		if count < expectedPerServer-5 || count > expectedPerServer+5 {
-			t.Errorf("Server %s: expected ~%d values, got %d",
-				server, expectedPerServer, count)
-		}
+	total := 0
+	expectedKeySize := 5
+	for _, server := range r.servers {
+		total += len(server.databases)
+	}
+	if total != expectedKeySize {
+		t.Errorf("Expected %d servers, got %d", expectedKeySize, total)
 	}
 }
