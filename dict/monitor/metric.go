@@ -3,13 +3,14 @@ package monitor
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/prometheus"
 	otelMetric "go.opentelemetry.io/otel/metric"
 	sdkMetric "go.opentelemetry.io/otel/sdk/metric"
-	"log"
-	"net/http"
 )
 
 // docs: https://opentelemetry.io/docs/demo/
